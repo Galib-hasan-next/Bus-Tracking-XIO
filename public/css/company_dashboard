@@ -1,0 +1,999 @@
+/* ==========================================
+GENERAL
+========================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+
+}
+
+
+body{
+
+    background:#f4f7fc;
+
+    color:#333;
+
+}
+
+
+a{
+
+    text-decoration:none;
+
+}
+
+
+
+/* ==========================================
+SIDEBAR
+========================================== */
+
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:260px;
+
+    height:100vh;
+
+    background:#0b2b6d;
+
+    overflow-y:auto;
+
+    box-shadow:3px 0 15px rgba(0,0,0,.15);
+
+    z-index:1000;
+
+}
+
+
+
+.logo{
+
+    color:#fff;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+    text-align:center;
+
+    padding:30px 15px;
+
+    border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+
+
+.menu{
+
+    list-style:none;
+
+    padding:20px 0;
+
+}
+
+
+
+.menu li{
+
+    margin:8px 15px;
+
+}
+
+
+
+.menu a{
+
+    display:block;
+
+    color:#fff;
+
+    padding:15px 18px;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+    font-size:16px;
+
+}
+
+
+
+.menu a:hover{
+
+    background:#1d5eff;
+
+}
+
+
+
+.menu a.active{
+
+    background:#1d5eff;
+
+    font-weight:bold;
+
+}
+
+
+
+/* ==========================================
+MAIN
+========================================== */
+
+
+.main{
+
+    margin-left:260px;
+
+    min-height:100vh;
+
+    padding-bottom:30px;
+
+}
+/* ==========================================
+TOPBAR
+========================================== */
+
+
+.topbar{
+
+    min-height:85px;
+
+    background:#fff;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 40px;
+
+    box-shadow:0 2px 15px rgba(0,0,0,.08);
+
+}
+
+
+
+.topbar h2{
+
+    color:#0b2b6d;
+
+    margin-bottom:5px;
+
+}
+
+
+
+.subtitle{
+
+    color:#777;
+
+    font-size:14px;
+
+}
+
+
+
+.profile{
+
+    font-size:16px;
+
+    color:#444;
+
+}
+
+
+
+.profile strong{
+
+    color:#0b2b6d;
+
+}
+
+
+
+/* ==========================================
+WELCOME
+========================================== */
+
+
+.welcome{
+
+    background:#fff;
+
+    margin:30px;
+
+    padding:35px;
+
+    border-radius:18px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+
+
+.welcome h1{
+
+    color:#0b2b6d;
+
+    margin-bottom:15px;
+
+}
+
+
+
+.welcome p{
+
+    color:#666;
+
+    line-height:1.8;
+
+}
+
+
+
+/* ==========================================
+STATISTICS CARDS
+========================================== */
+
+
+.cards{
+
+    margin:30px;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+
+
+.card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    border-top:5px solid #1d5eff;
+
+}
+
+
+
+.card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+
+
+.card:nth-child(2){
+
+    border-top-color:#0b8a32;
+
+}
+
+
+
+.card:nth-child(3){
+
+    border-top-color:#ff9800;
+
+}
+
+
+
+.card:nth-child(4){
+
+    border-top-color:#9c27b0;
+
+}
+
+
+
+.card:nth-child(5){
+
+    border-top-color:#009688;
+
+}
+
+
+
+.card:nth-child(6){
+
+    border-top-color:#d40000;
+
+}
+
+
+
+.card h3{
+
+    color:#555;
+
+    font-size:18px;
+
+}
+
+
+
+.number{
+
+    margin:18px 0 10px;
+
+    font-size:38px;
+
+    font-weight:bold;
+
+    color:#1d5eff;
+
+}
+
+
+
+.card span{
+
+    color:#888;
+
+    font-size:14px;
+
+}
+/* ==========================================
+QUICK ACTIONS
+========================================== */
+
+
+.actions{
+
+    margin:30px;
+
+}
+
+
+
+.actions h2{
+
+    color:#0b2b6d;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.action-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+
+
+.action{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+
+
+.action:hover{
+
+    transform:translateY(-6px);
+
+}
+
+
+
+.action a{
+
+    color:#0b2b6d;
+
+}
+
+
+
+.action a:hover{
+
+    color:#1d5eff;
+
+}
+
+
+
+.icon{
+
+    font-size:42px;
+
+    margin-bottom:15px;
+
+}
+
+
+
+.action h3{
+
+    margin-bottom:10px;
+
+}
+
+
+
+.action p{
+
+    color:#777;
+
+    font-size:14px;
+
+    line-height:1.6;
+
+}
+
+
+
+
+
+/* ==========================================
+COMPANY INFORMATION
+========================================== */
+
+
+.company-box{
+
+    margin:30px;
+
+    background:#fff;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+
+
+.company-box h2{
+
+    color:#0b2b6d;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.info{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+    gap:20px;
+
+}
+
+
+
+.info-item{
+
+    background:#f8fbff;
+
+    padding:18px;
+
+    border-radius:12px;
+
+    border-left:5px solid #1d5eff;
+
+}
+
+
+
+.info-item strong{
+
+    display:block;
+
+    color:#0b2b6d;
+
+    margin-bottom:8px;
+
+}
+
+
+
+
+
+/* ==========================================
+STATUS BADGES
+========================================== */
+
+
+.status-approved,
+.status-active,
+.status-booked{
+
+    color:#0b8a32;
+
+    font-weight:bold;
+
+}
+
+
+
+.status-pending{
+
+    color:#d68b00;
+
+    font-weight:bold;
+
+}
+
+
+
+.status-rejected,
+.status-inactive,
+.status-cancelled{
+
+    color:#d40000;
+
+    font-weight:bold;
+
+}
+
+
+
+.status-completed{
+
+    color:#0066cc;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+/* ==========================================
+TABLE SECTION
+========================================== */
+
+
+.recent-buses,
+.recent-routes,
+.recent-bookings{
+
+    margin:30px;
+
+    background:#fff;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+
+
+.recent-buses h2,
+.recent-routes h2,
+.recent-bookings h2{
+
+    color:#0b2b6d;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.table-wrapper{
+
+    overflow-x:auto;
+
+}
+
+
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+
+table th{
+
+    background:#0b2b6d;
+
+    color:#fff;
+
+    padding:15px;
+
+    text-align:left;
+
+    font-size:15px;
+
+}
+
+
+
+table td{
+
+    padding:14px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+
+
+td:last-child{
+
+    white-space:nowrap;
+
+}
+
+
+
+table tr:nth-child(even){
+
+    background:#fafafa;
+
+}
+
+
+
+table tr:hover{
+
+    background:#eef4ff;
+
+}
+/* ==========================================
+BUTTONS
+========================================== */
+
+
+.btn-small{
+
+    display:inline-block;
+
+    margin:3px;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    color:#fff;
+
+    font-size:13px;
+
+    transition:.3s;
+
+}
+
+
+
+.edit{
+
+    background:#1d5eff;
+
+}
+
+
+
+.edit:hover{
+
+    background:#1249d6;
+
+}
+
+
+
+.delete{
+
+    background:#d40000;
+
+}
+
+
+
+.delete:hover{
+
+    background:#b30000;
+
+}
+
+
+
+.track{
+
+    background:#0b8a32;
+
+}
+
+
+
+.track:hover{
+
+    background:#086824;
+
+}
+
+
+
+
+
+/* ==========================================
+FOOTER
+========================================== */
+
+
+.footer{
+
+    text-align:center;
+
+    padding:30px;
+
+    color:#777;
+
+    font-size:14px;
+
+}
+
+
+
+
+
+/* ==========================================
+SCROLLBAR
+========================================== */
+
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+
+
+::-webkit-scrollbar-thumb{
+
+    background:#1d5eff;
+
+    border-radius:20px;
+
+}
+
+
+
+::-webkit-scrollbar-track{
+
+    background:#f1f1f1;
+
+}
+
+
+
+
+
+/* ==========================================
+RESPONSIVE TABLET
+========================================== */
+
+
+@media(max-width:1000px){
+
+
+.cards{
+
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+}
+
+
+
+.action-grid{
+
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+}
+
+
+}
+
+
+
+
+
+/* ==========================================
+RESPONSIVE MOBILE
+========================================== */
+
+
+@media(max-width:768px){
+
+
+
+.sidebar{
+
+    position:relative;
+
+    width:100%;
+
+    height:auto;
+
+}
+
+
+
+.main{
+
+    margin-left:0;
+
+}
+
+
+
+.topbar{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+    padding:20px;
+
+}
+
+
+
+.welcome,
+.cards,
+.actions,
+.company-box,
+.recent-buses,
+.recent-routes,
+.recent-bookings{
+
+    margin:20px;
+
+}
+
+
+
+table{
+
+    font-size:14px;
+
+}
+
+
+
+.btn-small{
+
+    display:inline-block;
+
+    margin:3px;
+
+    text-align:center;
+
+}
+
+
+
+}
+
+
+
+
+
+/* ==========================================
+SMALL MOBILE
+========================================== */
+
+
+@media(max-width:480px){
+
+
+
+.logo{
+
+    font-size:22px;
+
+}
+
+
+
+.number{
+
+    font-size:30px;
+
+}
+
+
+
+.card{
+
+    padding:20px;
+
+}
+
+
+
+.action{
+
+    padding:20px;
+
+}
+
+
+
+.icon{
+
+    font-size:34px;
+
+}
+
+
+
+table th,
+table td{
+
+    padding:10px;
+
+    font-size:13px;
+
+}
+
+
+
+}
