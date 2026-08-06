@@ -1,0 +1,311 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f4f8ff;
+}
+
+.navbar{
+
+    background:#0b2b6d;
+
+    color:white;
+
+    padding:18px 8%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.logo{
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}
+
+.navbar ul{
+
+    display:flex;
+
+    list-style:none;
+
+    gap:20px;
+
+    align-items:center;
+
+}
+
+.navbar ul li a{
+
+    color:white;
+
+    text-decoration:none;
+
+    transition:.3s;
+
+}
+
+.navbar ul li a:hover{
+
+    color:#ffd54f;
+
+}
+
+.active{
+
+    color:#ffd54f !important;
+
+}
+
+.btn{
+
+    background:#1d5eff;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+}
+
+.container{
+
+    width:90%;
+
+    max-width:1200px;
+
+    margin:40px auto;
+
+}
+
+.container h1{
+
+    color:#0b2b6d;
+
+    margin-bottom:25px;
+
+}
+
+.search-form{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:15px;
+
+    margin-bottom:30px;
+
+}
+
+.search-form input{
+
+    padding:14px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+}
+
+.search-form button{
+
+    background:#1d5eff;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+}
+
+.search-form button:hover{
+
+    background:#0b45d1;
+
+}
+.bus-list{
+
+    margin-top:30px;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+
+    gap:25px;
+
+}
+
+.bus-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.bus-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.bus-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.bus-header h3{
+
+    color:#0b2b6d;
+
+}
+
+.company{
+
+    background:#eef4ff;
+
+    color:#1d5eff;
+
+    padding:6px 12px;
+
+    border-radius:20px;
+
+    font-size:14px;
+
+}
+
+.bus-details p{
+
+    margin:10px 0;
+
+    color:#555;
+
+}
+
+.bus-footer{
+
+    margin-top:25px;
+
+}
+
+.book-btn{
+
+    display:block;
+
+    text-align:center;
+
+    background:#1d5eff;
+
+    color:white;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+}
+
+.book-btn:hover{
+
+    background:#0b45d1;
+
+}
+
+.login-btn{
+
+    display:block;
+
+    text-align:center;
+
+    background:#ff9800;
+
+    color:white;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+}
+
+.login-btn:hover{
+
+    background:#f57c00;
+
+}
+
+.no-result{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+hr{
+
+    margin:25px 0;
+
+    border:0;
+
+    border-top:1px solid #ddd;
+
+}
+
+@media(max-width:768px){
+
+.navbar{
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+.navbar ul{
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+}
+
+}
