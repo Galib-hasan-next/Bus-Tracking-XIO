@@ -1,0 +1,238 @@
+/* ==========================================
+GENERAL
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+    background:linear-gradient(135deg,#eef4ff,#dce8ff);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:100vh;
+
+}
+
+/* ==========================================
+CONTAINER
+========================================== */
+
+.container{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    padding:30px;
+
+}
+
+.card{
+
+    background:#fff;
+
+    width:900px;
+
+    padding:50px;
+
+    border-radius:25px;
+
+    text-align:center;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
+
+}
+
+.card h1{
+
+    color:#0b2b6d;
+
+    margin-bottom:10px;
+
+    font-size:38px;
+
+}
+
+.card h2{
+
+    color:#1d5eff;
+
+    margin-bottom:10px;
+
+}
+
+.card>p{
+
+    color:#666;
+
+    margin-bottom:40px;
+
+    font-size:17px;
+
+}
+
+/* ==========================================
+OPTIONS
+========================================== */
+
+.options{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:30px;
+
+}
+
+.option{
+
+    text-decoration:none;
+
+    background:#f8fbff;
+
+    border:2px solid transparent;
+
+    border-radius:20px;
+
+    padding:35px 25px;
+
+    transition:.3s;
+
+    color:#333;
+
+}
+
+.option:hover{
+
+    transform:translateY(-8px);
+
+    border-color:#1d5eff;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.10);
+
+}
+
+.icon{
+
+    font-size:55px;
+
+    margin-bottom:15px;
+
+}
+
+.option h3{
+
+    color:#0b2b6d;
+
+    margin-bottom:12px;
+
+}
+
+.option p{
+
+    color:#666;
+
+    line-height:1.7;
+
+    margin-bottom:25px;
+
+}
+
+.option button{
+
+    background:#1d5eff;
+
+    color:#fff;
+
+    border:none;
+
+    padding:14px 28px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+.option:hover button{
+
+    background:#0b45d1;
+
+}
+
+/* ==========================================
+SIGN IN
+========================================== */
+
+.signin{
+
+    margin-top:35px;
+
+    color:#555;
+
+    font-size:16px;
+
+}
+
+.signin a{
+
+    color:#1d5eff;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+}
+
+.signin a:hover{
+
+    text-decoration:underline;
+
+}
+
+/* ==========================================
+RESPONSIVE
+========================================== */
+
+@media(max-width:768px){
+
+.card{
+
+    width:100%;
+
+    padding:30px;
+
+}
+
+.options{
+
+    grid-template-columns:1fr;
+
+}
+
+.card h1{
+
+    font-size:30px;
+
+}
+
+}
