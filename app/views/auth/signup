@@ -1,0 +1,102 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Choose Account Type</title>
+
+<link rel="stylesheet" href="css/signup.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>🚌 Bus Tracking System</h1>
+
+<h2>Create a New Account</h2>
+
+<p>
+
+Choose how you would like to register.
+
+</p>
+
+<div class="options">
+
+<a href="index.php?page=register_passenger" class="option">
+
+<div class="icon">👤</div>
+
+<h3>Passenger</h3>
+
+<p>
+
+Book bus tickets, view schedules and track buses.
+
+</p>
+
+<button>
+
+Register as Passenger
+
+</button>
+
+</a>
+
+<a href="index.php?page=register_company" class="option">
+
+<div class="icon">🏢</div>
+
+<h3>Bus Company</h3>
+
+<p>
+
+Register your company and manage buses and routes.
+
+</p>
+
+<button>
+
+Register as Company
+
+</button>
+
+</a>
+
+</div>
+
+<div class="signin">
+
+Already have an account?
+
+<a href="index.php?page=signin">
+
+Sign In
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
+
+
