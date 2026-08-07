@@ -1,0 +1,19 @@
+<?php
+
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/HomeModel.php';
+
+class HomeController
+{
+    public function index()
+    {
+        $database = new Database();
+        $model = new HomeModel($database->connect());
+        $total_buses = $model->getCount('buses');
+        $total_companies = $model->getCount('companies');
+        $total_passengers = $model->getCount('users');
+        $route_result = $model->getPopularRoutes();
+        $company_result = $model->getApprovedCompanies();
+        include __DIR__ . '/../views/home.php';
+    }
+}
