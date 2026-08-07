@@ -1,0 +1,133 @@
+<?php
+
+$page = $_GET['page'] ?? 'signin';
+
+switch ($page) {
+    case 'home':
+        require_once __DIR__ . '/controllers/HomeController.php';
+        (new HomeController())->index();
+        break;
+    case 'signin':
+    case 'logout':
+    case 'signup':
+    case 'register_passenger':
+    case 'register_company':
+        require_once __DIR__ . '/controllers/AuthController.php';
+        $controller = new AuthController();
+        if ($page === 'logout') $controller->logout();
+        elseif ($page === 'signup') $controller->signup();
+        elseif ($page === 'register_passenger') $controller->registerPassenger();
+        elseif ($page === 'register_company') $controller->registerCompany();
+        else $controller->signin();
+        break;
+
+    case 'admin_dashboard':
+    case 'admin_verify_companies':
+        require_once __DIR__ . '/controllers/AdminController.php';
+        $controller = new AdminController();
+        $page === 'admin_dashboard' ? $controller->dashboard() : $controller->verifyCompanies();
+        break;
+
+    case 'company_dashboard':
+    case 'company_profile':
+    case 'edit_company_profile':
+    case 'company_bookings':
+    case 'company_booking_details':
+    case 'confirm_booking':
+    case 'cancel_booking':
+        require_once __DIR__ . '/controllers/CompanyController.php';
+        $controller = new CompanyController();
+        if ($page === 'company_profile') {
+            $controller->profile();
+        } elseif ($page === 'edit_company_profile') {
+            $controller->editProfile();
+        } elseif ($page === 'company_bookings') {
+            $controller->bookings();
+        } elseif ($page === 'company_booking_details') {
+            $controller->bookingDetails();
+        } elseif ($page === 'confirm_booking') {
+            $controller->updateBookingStatus('Confirmed');
+        } elseif ($page === 'cancel_booking') {
+            $controller->updateBookingStatus('Cancelled');
+        } else {
+            $controller->dashboard();
+        }
+        break;
+
+    case 'view_buses':
+    case 'add_bus':
+    case 'edit_bus':
+    case 'delete_bus':
+        require_once __DIR__ . '/controllers/BusController.php';
+        $controller = new BusController();
+        if ($page === 'add_bus') {
+            $controller->addBus();
+        } elseif ($page === 'edit_bus') {
+            $controller->editBus();
+        } elseif ($page === 'delete_bus') {
+            $controller->deleteBus();
+        } else {
+            $controller->viewBuses();
+        }
+        break;
+
+    case 'view_routes':
+    case 'add_route':
+    case 'edit_route':
+    case 'delete_route':
+        require_once __DIR__ . '/controllers/RouteController.php';
+        $controller = new RouteController();
+        if ($page === 'add_route') {
+            $controller->addRoute();
+        } elseif ($page === 'edit_route') {
+            $controller->editRoute();
+        } elseif ($page === 'delete_route') {
+            $controller->deleteRoute();
+        } else {
+            $controller->viewRoutes();
+        }
+        break;
+
+    case 'passenger_dashboard':
+    case 'my_bookings':
+    case 'booking_details':
+    case 'booking_success':
+    case 'passenger_cancel_booking':
+        require_once __DIR__ . '/controllers/PassengerController.php';
+        $controller = new PassengerController();
+        if ($page === 'passenger_dashboard') $controller->dashboard();
+        elseif ($page === 'booking_details') $controller->bookingDetails();
+        elseif ($page === 'booking_success') $controller->bookingDetails(true);
+        elseif ($page === 'passenger_cancel_booking') $controller->cancelBooking();
+        else $controller->myBookings();
+        break;
+
+    case 'search_bus':
+    case 'book_ticket':
+        require_once __DIR__ . '/controllers/BookingController.php';
+        $controller = new BookingController();
+        $page === 'search_bus' ? $controller->search() : $controller->bookTicket();
+        break;
+
+    case 'live_tracking':
+    case 'get_location':
+    case 'get_route_points':
+    case 'update_location':
+        require_once __DIR__ . '/controllers/TrackingController.php';
+        $controller = new TrackingController();
+        if ($page === 'live_tracking') {
+            $controller->liveTracking();
+        } elseif ($page === 'get_route_points') {
+            $controller->getRoutePoints();
+        } elseif ($page === 'update_location') {
+            $controller->updateLocation();
+        } else {
+            $controller->getLocation();
+        }
+        break;
+
+    default:
+        http_response_code(404);
+        echo '<h1>404 - Page Not Found</h1>';
+        break;
+}
