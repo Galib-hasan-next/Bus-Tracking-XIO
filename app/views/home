@@ -1,0 +1,1620 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+Smart Bus Tracker
+
+</title>
+
+<style>
+
+/* ==================================
+   RESET
+================================== */
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:'Segoe UI',sans-serif;
+
+}
+
+body{
+
+background:#f5f7fb;
+
+color:#333;
+
+}
+
+a{
+
+text-decoration:none;
+
+}
+
+button{
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+/* ==================================
+   HEADER
+================================== */
+
+header{
+
+background:#0066ff;
+
+color:white;
+
+padding:18px 8%;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+position:sticky;
+
+top:0;
+
+z-index:999;
+
+box-shadow:0 2px 10px rgba(0,0,0,.15);
+
+}
+
+.logo{
+
+font-size:30px;
+
+font-weight:bold;
+
+}
+
+nav{
+
+display:flex;
+
+gap:25px;
+
+align-items:center;
+
+}
+
+nav a{
+
+color:white;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+nav a:hover{
+
+color:#ffe600;
+
+}
+
+/* ==================================
+   HERO
+================================== */
+
+.hero{
+
+height:520px;
+
+background:
+
+linear-gradient(
+
+rgba(0,0,0,.55),
+
+rgba(0,0,0,.55)
+
+),
+
+url("img/bus.png");
+
+background-size:cover;
+
+background-position:center;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+text-align:center;
+
+color:white;
+
+padding:20px;
+
+}
+
+.hero-content{
+
+max-width:750px;
+
+}
+
+.hero h1{
+
+font-size:55px;
+
+margin-bottom:20px;
+
+}
+
+.hero p{
+
+font-size:22px;
+
+line-height:1.7;
+
+margin-bottom:35px;
+
+}
+
+.hero button{
+
+background:#0066ff;
+
+color:white;
+
+border:none;
+
+padding:14px 30px;
+
+border-radius:8px;
+
+font-size:17px;
+
+margin:8px;
+
+}
+
+.hero button:hover{
+
+background:#004dcc;
+
+transform:translateY(-3px);
+
+}
+
+/* ==================================
+   SEARCH
+================================== */
+
+.search-section{
+
+margin-top:-70px;
+
+padding:0 8% 60px;
+
+}
+
+.search-box{
+
+background:white;
+
+padding:35px;
+
+border-radius:18px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+
+}
+
+.search-box h2{
+
+text-align:center;
+
+margin-bottom:25px;
+
+color:#0066ff;
+
+}
+
+.search-box form{
+
+display:flex;
+
+justify-content:center;
+
+align-items:end;
+
+gap:20px;
+
+flex-wrap:wrap;
+
+}
+
+.input-group{
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.input-group label{
+
+font-weight:bold;
+
+margin-bottom:8px;
+
+}
+
+select{
+
+width:220px;
+
+padding:12px;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+font-size:15px;
+
+}
+
+.search-box button{
+
+background:#0066ff;
+
+color:white;
+
+border:none;
+
+padding:13px 28px;
+
+border-radius:8px;
+
+font-size:16px;
+
+}
+
+.search-box button:hover{
+
+background:#004dcc;
+
+}
+
+/* ==================================
+   STATISTICS
+================================== */
+
+.stats-section{
+
+padding:60px 8%;
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:25px;
+
+}
+
+.stat-card{
+
+background:#0066ff;
+
+color:white;
+
+padding:35px;
+
+text-align:center;
+
+border-radius:15px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+
+transition:.3s;
+
+}
+
+.stat-card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.stat-card h2{
+
+font-size:45px;
+
+margin-bottom:10px;
+
+}
+
+.stat-card p{
+
+font-size:18px;
+
+}
+
+
+
+/* ==================================
+   SECTION
+================================== */
+
+.section{
+
+padding:70px 8%;
+
+}
+
+.section h2{
+
+text-align:center;
+
+font-size:34px;
+
+color:#0066ff;
+
+margin-bottom:40px;
+
+}
+
+
+
+/* ==================================
+   CARD
+================================== */
+
+.card-container{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+gap:25px;
+
+}
+
+.card{
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.12);
+
+text-align:center;
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.card img{
+
+width:100px;
+
+height:100px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+margin-bottom:15px;
+
+}
+
+.card h3{
+
+color:#0066ff;
+
+margin-bottom:15px;
+
+}
+
+.card p{
+
+margin-bottom:12px;
+
+line-height:1.6;
+
+}
+
+.card button{
+
+background:#0066ff;
+
+color:white;
+
+border:none;
+
+padding:10px 20px;
+
+border-radius:8px;
+
+}
+
+.card button:hover{
+
+background:#004dcc;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+<div class="logo">
+
+🚌 Smart Bus Tracker
+
+</div>
+
+<nav>
+
+<a href="index.php?page=home">Home</a>
+
+<a href="index.php?page=search_bus">Search Bus</a>
+
+<a href="index.php?page=signin">Sign In</a>
+
+<a href="index.php?page=register_passenger">Passenger Register</a>
+
+<a href="index.php?page=register_company">Company Register</a>
+
+</nav>
+
+</header>
+
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>
+
+Smart Tracking, Better Journey
+
+</h1>
+
+<p>
+
+Find buses, track live locations,
+compare ticket prices,
+and book tickets with ease.
+
+</p>
+
+<a href="index.php?page=search_bus">
+
+<button>
+
+🔍 Search Bus
+
+</button>
+
+</a>
+
+<a href="index.php?page=live_tracking">
+
+<button>
+
+📍 Live Tracking
+
+</button>
+
+</a>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= SEARCH ================= -->
+
+<section class="search-section">
+
+<div class="search-box">
+
+<h2>
+
+Search Bus
+
+</h2>
+
+<form
+action="index.php?page=search_bus"
+method="GET"
+autocomplete="off">
+
+<div class="input-group">
+
+<label>
+
+From
+
+</label>
+
+<select name="from" required>
+
+<option value="">Select Starting Point</option>
+
+<option value="Gabtoli">Gabtoli</option>
+
+<option value="Dhaka">Dhaka</option>
+
+<option value="Uttara">Uttara</option>
+
+<option value="Savar">Savar</option>
+
+</select>
+
+</div>
+
+<div class="input-group">
+
+<label>
+
+To
+
+</label>
+
+<select name="to" required>
+
+<option value="">Select Destination</option>
+
+<option value="Chittagong">Chittagong</option>
+
+<option value="Sylhet">Sylhet</option>
+
+<option value="Rajshahi">Rajshahi</option>
+
+<option value="Cox's Bazar">Cox's Bazar</option>
+
+</select>
+
+</div>
+
+<button type="submit">
+
+Search Bus
+
+</button>
+
+</form>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= STATISTICS ================= -->
+
+<section class="stats-section">
+
+<div class="stat-card">
+
+<h2>
+
+<?php echo $total_buses; ?>
+
+</h2>
+
+<p>
+
+Active Buses
+
+</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2>
+
+<?php echo $total_companies; ?>
+
+</h2>
+
+<p>
+
+Approved Companies
+
+</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2>
+
+<?php echo $total_passengers; ?>
+
+</h2>
+
+<p>
+
+Registered Passengers
+
+</p>
+
+</div>
+
+</section>
+<!-- ================= POPULAR ROUTES ================= -->
+
+<section class="section">
+
+<h2>
+
+Popular Routes
+
+</h2>
+
+<div class="card-container">
+
+<?php
+
+if(mysqli_num_rows($route_result)>0){
+
+while($route=mysqli_fetch_assoc($route_result)){
+
+?>
+
+<div class="card">
+
+<h3>
+
+<?php echo htmlspecialchars($route['route_name']); ?>
+
+</h3>
+
+<p>
+
+📍
+
+<b>
+
+<?php echo htmlspecialchars($route['starting_point']); ?>
+
+</b>
+
+→
+
+<b>
+
+<?php echo htmlspecialchars($route['destination']); ?>
+
+</b>
+
+</p>
+
+<p>
+
+💰 Fare :
+<b>
+
+৳ <?php echo number_format($route['fare']); ?>
+
+</b>
+
+</p>
+
+<p>
+
+🕒 Departure :
+
+<?php echo date("h:i A",strtotime($route['departure_time'])); ?>
+
+</p>
+
+<a href="index.php?page=search_bus&from=<?php echo urlencode($route['starting_point']); ?>&to=<?php echo urlencode($route['destination']); ?>">
+
+<button>
+
+Search Bus
+
+</button>
+
+</a>
+
+</div>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<div class="card">
+
+<h3>
+
+No Routes Found
+
+</h3>
+
+<p>
+
+There are currently no active routes available.
+
+</p>
+
+</div>
+
+<?php
+
+}
+
+?>
+
+</div>
+
+</section>
+<!-- ================= BUS COMPANIES ================= -->
+
+<section class="section">
+
+<h2>
+
+Our Bus Companies
+
+</h2>
+
+<div class="card-container">
+
+<?php
+
+if(mysqli_num_rows($company_result) > 0){
+
+while($company = mysqli_fetch_assoc($company_result)){
+
+?>
+
+<div class="card">
+
+<?php
+
+if(!empty($company['logo'])){
+
+?>
+
+<img
+src="uploads/<?php echo htmlspecialchars($company['logo']); ?>"
+alt="<?php echo htmlspecialchars($company['company_name']); ?>"
+width="100"
+height="100">
+
+<?php
+
+}else{
+
+?>
+
+<img
+src="img/company.png"
+alt="Company Logo"
+width="100"
+height="100">
+
+<?php
+
+}
+
+?>
+
+<h3>
+
+<?php echo htmlspecialchars($company['company_name']); ?>
+
+</h3>
+
+<p>
+
+📍
+
+<?php echo htmlspecialchars($company['address']); ?>
+
+</p>
+
+<p>
+
+Approved Bus Company
+
+</p>
+
+<button disabled>
+
+Company Profile
+
+</button>
+
+</div>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<div class="card">
+
+<h3>
+
+No Companies Found
+
+</h3>
+
+<p>
+
+There are currently no approved bus companies.
+
+</p>
+
+</div>
+
+<?php
+
+}
+
+?>
+
+</div>
+
+</section>
+<!-- ================= LIVE TRACKING ================= -->
+
+<section class="section tracking">
+
+<h2>
+
+Live Bus Tracking
+
+</h2>
+
+<div class="tracking-box">
+
+<div>
+
+<h3>
+
+Track Your Bus Live
+
+</h3>
+
+<p>
+
+Monitor your bus in real-time using GPS technology.
+Know the current location before leaving home.
+
+</p>
+
+<br>
+
+<a href="index.php?page=live_tracking">
+
+<button>
+
+📍 Open Live Tracking
+
+</button>
+
+</a>
+
+</div>
+
+<div class="map-placeholder">
+
+🗺️
+
+<br><br>
+
+Live GPS Map
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= TICKET PRICE ================= -->
+
+<section class="section ticket">
+
+<h2>
+
+Ticket Prices
+
+</h2>
+
+<p>
+
+Compare ticket prices from different bus companies
+before booking your seat.
+
+</p>
+
+<br>
+
+<a href="index.php?page=search_bus">
+
+<button>
+
+Check Ticket Price
+
+</button>
+
+</a>
+
+</section>
+
+
+
+<!-- ================= PASSENGER REVIEWS ================= -->
+
+<section class="section">
+
+<h2>
+
+Passenger Reviews
+
+</h2>
+
+<div class="card-container">
+
+<div class="card">
+
+<h3>
+
+Rahim
+
+</h3>
+
+<p>
+
+⭐⭐⭐⭐⭐
+
+<br><br>
+
+Very easy to search buses and purchase tickets.
+
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>
+
+Karim
+
+</h3>
+
+<p>
+
+⭐⭐⭐⭐
+
+<br><br>
+
+GPS tracking saves a lot of waiting time.
+
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>
+
+Nusrat
+
+</h3>
+
+<p>
+
+⭐⭐⭐⭐⭐
+
+<br><br>
+
+Clean interface and simple booking process.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= HELP CENTER ================= -->
+
+<section class="section help">
+
+<h2>
+
+Help Center
+
+</h2>
+
+<div class="card-container">
+
+<div class="card">
+
+<h3>
+
+How to Book Ticket?
+
+</h3>
+
+<p>
+
+Search your route,
+select your preferred bus,
+choose available seats,
+confirm the booking.
+
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>
+
+GPS Tracking
+
+</h3>
+
+<p>
+
+Use the Live Tracking page
+to monitor your bus location
+before departure.
+
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>
+
+Support
+
+</h3>
+
+<p>
+
+Need help?
+
+<br><br>
+
+Email:
+
+support@smartbustracker.com
+
+<br><br>
+
+Phone:
+
+01XXXXXXXXX
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<style>
+
+/* ===========================
+   TRACKING
+=========================== */
+
+.tracking-box{
+
+background:white;
+
+padding:35px;
+
+border-radius:15px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+gap:30px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.12);
+
+}
+
+.map-placeholder{
+
+width:320px;
+
+height:220px;
+
+background:#e8e8e8;
+
+border-radius:15px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+text-align:center;
+
+font-size:28px;
+
+font-weight:bold;
+
+color:#666;
+
+}
+
+
+
+/* ===========================
+   TICKET
+=========================== */
+
+.ticket{
+
+background:#0066ff;
+
+color:white;
+
+text-align:center;
+
+}
+
+.ticket h2{
+
+color:white;
+
+margin-bottom:20px;
+
+}
+
+.ticket p{
+
+font-size:18px;
+
+margin-bottom:25px;
+
+}
+
+.ticket button{
+
+background:white;
+
+color:#0066ff;
+
+font-weight:bold;
+
+}
+
+.ticket button:hover{
+
+background:#f2f2f2;
+
+}
+
+
+
+/* ===========================
+   HELP
+=========================== */
+
+.help{
+
+background:#f8f9fb;
+
+}
+
+</style>
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+<div>
+
+<h3>
+
+🚌 Smart Bus Tracker
+
+</h3>
+
+<p>
+
+Smart Tracking • Better Journey
+
+</p>
+
+<p>
+
+© <span id="year"></span> Smart Bus Tracker
+
+</p>
+
+</div>
+
+
+
+<div>
+
+<h4>
+
+Quick Links
+
+</h4>
+
+<a href="index.php?page=home">
+
+🏠 Home
+
+</a>
+
+<br><br>
+
+<a href="index.php?page=search_bus">
+
+🔍 Search Bus
+
+</a>
+
+<br><br>
+
+<a href="index.php?page=signin">
+
+🔑 Sign In
+
+</a>
+
+<br><br>
+
+<a href="index.php?page=register_passenger">
+
+👤 Passenger Register
+
+</a>
+
+<br><br>
+
+<a href="index.php?page=register_company">
+
+🏢 Company Register
+
+</a>
+
+</div>
+
+
+
+<div>
+
+<h4>
+
+Contact
+
+</h4>
+
+<p>
+
+📧 support@smartbustracker.com
+
+</p>
+
+<br>
+
+<p>
+
+📞 +8801XXXXXXXXX
+
+</p>
+
+<br>
+
+<p>
+
+📍 Dhaka, Bangladesh
+
+</p>
+
+</div>
+
+</footer>
+
+
+
+<style>
+
+/* ===========================
+   FOOTER
+=========================== */
+
+footer{
+
+background:#111;
+
+color:white;
+
+padding:50px 8%;
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:40px;
+
+}
+
+footer h3{
+
+margin-bottom:20px;
+
+}
+
+footer h4{
+
+margin-bottom:20px;
+
+color:#00aaff;
+
+}
+
+footer a{
+
+display:block;
+
+color:white;
+
+margin-bottom:10px;
+
+transition:.3s;
+
+}
+
+footer a:hover{
+
+color:#00aaff;
+
+}
+
+footer p{
+
+line-height:1.8;
+
+}
+
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:900px){
+
+header{
+
+flex-direction:column;
+
+padding:20px;
+
+}
+
+nav{
+
+margin-top:20px;
+
+flex-wrap:wrap;
+
+justify-content:center;
+
+}
+
+.hero{
+
+height:auto;
+
+padding:100px 20px;
+
+}
+
+.hero h1{
+
+font-size:38px;
+
+}
+
+.hero p{
+
+font-size:18px;
+
+}
+
+.search-section{
+
+margin-top:20px;
+
+}
+
+.search-box form{
+
+flex-direction:column;
+
+align-items:stretch;
+
+}
+
+select{
+
+width:100%;
+
+}
+
+.stats-section{
+
+grid-template-columns:1fr;
+
+}
+
+.card-container{
+
+grid-template-columns:1fr;
+
+}
+
+.tracking-box{
+
+flex-direction:column;
+
+text-align:center;
+
+}
+
+.map-placeholder{
+
+width:100%;
+
+}
+
+footer{
+
+grid-template-columns:1fr;
+
+text-align:center;
+
+}
+
+}
+
+
+
+/* ===========================
+   BUTTON EFFECT
+=========================== */
+
+button{
+
+transition:.3s;
+
+}
+
+button:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+
+}
+
+</style>
+
+
+
+<script>
+
+/* Footer Year */
+
+document.getElementById("year").innerHTML =
+new Date().getFullYear();
+
+
+
+/* Button Animation */
+
+document.querySelectorAll("button").forEach(function(btn){
+
+btn.addEventListener("mouseenter",function(){
+
+this.style.transform="scale(1.05)";
+
+});
+
+btn.addEventListener("mouseleave",function(){
+
+this.style.transform="scale(1)";
+
+});
+
+});
+
+</script>
+
+</body>
+
+</html>
