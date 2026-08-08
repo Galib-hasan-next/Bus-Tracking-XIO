@@ -1,0 +1,30 @@
+<?php
+
+class HomeModel
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getCount($table)
+    {
+        $allowed = ['buses', 'companies', 'users'];
+        if (!in_array($table, $allowed, true)) {
+            return 0;
+        }
+        return (int) mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM $table"))['total'];
+    }
+
+    public function getPopularRoutes()
+    {
+        return mysqli_query($this->conn, "SELECT route_id, route_name, starting_point, destination, fare, departure_time FROM routes WHERE status='Active' ORDER BY departure_time ASC LIMIT 6");
+    }
+
+    public function getApprovedCompanies()
+    {
+        return mysqli_query($this->conn, "SELECT company_id, company_name, logo, address FROM companies WHERE status='approved' ORDER BY company_name ASC LIMIT 6");
+    }
+}
