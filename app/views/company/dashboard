@@ -1,0 +1,873 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Company Dashboard</title>
+
+<link rel="stylesheet" href="css/company_dashboard.css">
+
+</head>
+
+<body>
+
+<!-- ==========================
+SIDEBAR
+========================== -->
+
+<div class="sidebar">
+
+<div class="logo">
+
+🚌 BUS TRACKER
+
+</div>
+
+<ul class="menu">
+
+<li>
+<a class="active" href="index.php?page=company_dashboard">
+🏠 Dashboard
+</a>
+</li>
+
+<li>
+<a href="index.php?page=add_bus">
+➕ Add Bus
+</a>
+</li>
+
+<li>
+<a href="index.php?page=view_buses">
+🚌 Manage Buses
+</a>
+</li>
+
+<li>
+<a href="index.php?page=add_route">
+➕ Add Route
+</a>
+</li>
+
+<li>
+<a href="index.php?page=view_routes">
+🛣 Manage Routes
+</a>
+</li>
+
+<li>
+<a href="index.php?page=company_bookings">
+🎫 Bookings
+</a>
+</li>
+
+<li>
+<a href="index.php?page=company_reports">
+📊 Reports
+</a>
+</li>
+
+<li>
+<a href="index.php?page=payment_verification">
+💳 Payment Verification
+</a>
+</li>
+
+<li>
+<a href="index.php?page=company_profile">
+🏢 Company Profile
+</a>
+</li>
+
+<li>
+<a href="index.php?page=logout">
+🚪 Logout
+</a>
+</li>
+
+</ul>
+
+</div>
+
+<!-- ==========================
+MAIN CONTENT
+========================== -->
+
+<div class="main">
+
+<!-- ==========================
+TOPBAR
+========================== -->
+
+<div class="topbar">
+
+<div>
+
+<h2>Company Dashboard</h2>
+
+<p class="subtitle">
+
+Manage your buses, routes and bookings.
+
+</p>
+
+</div>
+
+<div class="profile">
+
+Welcome,
+
+<strong>
+
+<?php echo $name; ?>
+
+</strong>
+
+</div>
+
+</div>
+
+<!-- ==========================
+WELCOME
+========================== -->
+
+<div class="welcome">
+
+<h1>
+
+Hello,
+
+<?php echo $name; ?>
+
+👋
+
+</h1>
+
+<p>
+
+Welcome back to your company dashboard.
+
+Monitor buses, manage routes, track bookings and view your business statistics from one place.
+
+</p>
+
+</div>
+
+<!-- ==========================
+STATISTICS
+========================== -->
+
+<div class="cards">
+
+<div class="card">
+
+<h3>🚌 Total Buses</h3>
+
+<div class="number">
+
+<?php echo $total_bus; ?>
+
+</div>
+
+<span>Total registered buses</span>
+
+</div>
+
+<div class="card">
+
+<h3>✅ Active Buses</h3>
+
+<div class="number">
+
+<?php echo $active_bus; ?>
+
+</div>
+
+<span>Currently active</span>
+
+</div>
+
+<div class="card">
+
+<h3>🛣 Total Routes</h3>
+
+<div class="number">
+
+<?php echo $total_routes; ?>
+
+</div>
+
+<span>Registered routes</span>
+
+</div>
+
+<div class="card">
+
+<h3>📖 Total Bookings</h3>
+
+<div class="number">
+
+<?php echo $total_bookings; ?>
+
+</div>
+
+<span>Booked & completed</span>
+
+</div>
+
+<div class="card">
+
+<h3>🎫 Tickets Sold</h3>
+
+<div class="number">
+
+<?php echo $tickets_sold; ?>
+
+</div>
+
+<span>Total seats booked</span>
+
+</div>
+
+<div class="card">
+
+<h3>💰 Revenue</h3>
+
+<div class="number">
+
+৳<?php echo number_format($revenue,2); ?>
+
+</div>
+
+<span>Paid bookings only</span>
+
+</div>
+
+</div>
+<!-- ==========================================
+QUICK ACTIONS
+========================================== -->
+
+<div class="actions">
+
+<h2>⚡ Quick Actions</h2>
+
+<div class="action-grid">
+
+<div class="action">
+<a href="index.php?page=add_bus">
+<div class="icon">➕</div>
+<h3>Add Bus</h3>
+<p>Register a new bus.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=view_buses">
+<div class="icon">🚌</div>
+<h3>Manage Buses</h3>
+<p>View, edit or delete buses.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=add_route">
+<div class="icon">🛣</div>
+<h3>Add Route</h3>
+<p>Create a new route.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=view_routes">
+<div class="icon">📍</div>
+<h3>Manage Routes</h3>
+<p>View and update routes.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=company_bookings">
+<div class="icon">🎫</div>
+<h3>Bookings</h3>
+<p>Manage passenger bookings.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=company_reports">
+<div class="icon">📊</div>
+<h3>Reports</h3>
+<p>View booking and revenue reports.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=view_buses">
+<div class="icon">🛰</div>
+<h3>Live Tracking</h3>
+<p>Track buses from the bus list.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=payment_verification">
+<div class="icon">💳</div>
+<h3>Payment Verification</h3>
+<p>Review submitted payments.</p>
+</a>
+</div>
+
+<div class="action">
+<a href="index.php?page=company_profile">
+<div class="icon">🏢</div>
+<h3>Company Profile</h3>
+<p>Update company information.</p>
+</a>
+</div>
+
+</div>
+
+</div>
+
+<!-- ==========================================
+COMPANY INFORMATION
+========================================== -->
+
+<div class="company-box">
+
+<h2>🏢 Company Information</h2>
+
+<div class="info">
+
+<div class="info-item">
+
+<strong>Company Name</strong><br>
+
+<?php echo htmlspecialchars($company['company_name']); ?>
+
+</div>
+
+<div class="info-item">
+
+<strong>Email</strong><br>
+
+<?php echo htmlspecialchars($company['email']); ?>
+
+</div>
+
+<div class="info-item">
+
+<strong>Phone</strong><br>
+
+<?php echo htmlspecialchars($company['phone']); ?>
+
+</div>
+
+<div class="info-item">
+
+<strong>Status</strong><br>
+
+<?php
+if($company['status']=="approved"){
+    echo "<span class='status-approved'>🟢 Approved</span>";
+}
+elseif($company['status']=="pending"){
+    echo "<span class='status-pending'>🟡 Pending</span>";
+}
+else{
+    echo "<span class='status-rejected'>🔴 Rejected</span>";
+}
+?>
+</div>
+
+<div class="info-item">
+
+<strong>Total Buses</strong><br>
+
+<?php echo $total_bus; ?>
+
+</div>
+
+<div class="info-item">
+
+<strong>Total Routes</strong><br>
+
+<?php echo $total_routes; ?>
+
+</div>
+
+<div class="info-item">
+
+<strong>Total Bookings</strong><br>
+
+<?php echo $total_bookings; ?>
+
+</div>
+
+<div class="info-item">
+
+<strong>Total Revenue</strong><br>
+
+৳<?php echo number_format($revenue,2); ?>
+
+</div>
+
+</div>
+
+</div>
+<!-- ==========================================
+RECENT BUSES
+========================================== -->
+
+<div class="recent-buses">
+
+<h2>🚌 Recent Buses</h2>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Bus Name</th>
+
+<th>Bus Number</th>
+
+<th>Type</th>
+
+<th>Seats</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<?php
+
+if(mysqli_num_rows($recent_bus_result)>0){
+
+while($row=mysqli_fetch_assoc($recent_bus_result)){
+
+?>
+
+<tr>
+
+<td><?php echo htmlspecialchars($row['bus_name']); ?></td>
+
+<td><?php echo htmlspecialchars($row['bus_number']); ?></td>
+
+<td><?php echo htmlspecialchars($row['bus_type']); ?></td>
+
+<td><?php echo $row['total_seats']; ?></td>
+
+<td>
+
+<?php
+
+if($row['status']=="Active"){
+
+echo "<span class='status-active'>🟢 Active</span>";
+
+}else{
+
+echo "<span class='status-inactive'>🔴 Inactive</span>";
+
+}
+
+?>
+
+</td>
+
+<td>
+
+<a class="btn-small edit"
+href="index.php?page=edit_bus&id=<?php echo $row['bus_id']; ?>">
+
+Edit
+
+</a>
+
+<a class="btn-small delete"
+href="index.php?page=delete_bus&id=<?php echo $row['bus_id']; ?>"
+onclick="return confirm('Delete this bus?');">
+
+Delete
+
+</a>
+
+<a class="btn-small track"
+href="index.php?page=live_tracking&bus_id=<?php echo $row['bus_id']; ?>">
+
+Track
+
+</a>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<tr>
+
+<td colspan="6" style="text-align:center;">
+
+No buses found.
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+?>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- ==========================================
+RECENT ROUTES
+========================================== -->
+
+<div class="recent-routes">
+
+<h2>🛣 Recent Routes</h2>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Route Name</th>
+
+<th>Starting Point</th>
+
+<th>Destination</th>
+
+<th>Fare</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<?php
+
+if(mysqli_num_rows($recent_route_result)>0){
+
+while($route=mysqli_fetch_assoc($recent_route_result)){
+
+?>
+
+<tr>
+
+<td>
+
+<?php echo htmlspecialchars($route['route_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($route['starting_point']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($route['destination']); ?>
+
+</td>
+
+<td>
+
+৳<?php echo number_format($route['fare'],2); ?>
+
+</td>
+
+<td>
+
+<?php
+
+if($route['status']=="Active"){
+
+echo "<span class='status-active'>🟢 Active</span>";
+
+}else{
+
+echo "<span class='status-inactive'>🔴 Inactive</span>";
+
+}
+
+?>
+
+</td>
+
+<td>
+
+<a class="btn-small edit"
+href="index.php?page=edit_route&id=<?php echo $route['route_id']; ?>">
+
+Edit
+
+</a>
+
+<a class="btn-small delete"
+href="index.php?page=delete_route&id=<?php echo $route['route_id']; ?>"
+onclick="return confirm('Delete this route?');">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<tr>
+
+<td colspan="6" style="text-align:center;">
+
+No routes found.
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+?>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+<!-- ==========================================
+RECENT BOOKINGS
+========================================== -->
+
+<div class="recent-bookings">
+
+<h2>🎫 Recent Bookings</h2>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Booking ID</th>
+
+<th>Passenger</th>
+
+<th>Bus</th>
+
+<th>Route</th>
+
+<th>Journey Date</th>
+
+<th>Seats</th>
+
+<th>Amount</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<?php
+
+if(mysqli_num_rows($recent_booking_result)>0){
+
+while($booking=mysqli_fetch_assoc($recent_booking_result)){
+
+?>
+
+<tr>
+
+<td>
+
+#<?php echo $booking['booking_id']; ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($booking['passenger_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($booking['bus_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($booking['route_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo date("d M Y",strtotime($booking['journey_date'])); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($booking['seat_numbers']); ?>
+
+</td>
+
+<td>
+
+৳<?php echo number_format($booking['total_amount'],2); ?>
+
+</td>
+
+<td>
+
+<?php
+
+$status=$booking['booking_status'];
+
+if($status=="Booked"){
+
+echo "<span class='status-booked'>🟢 Booked</span>";
+
+}
+elseif($status=="Completed"){
+
+echo "<span class='status-completed'>🔵 Completed</span>";
+
+}
+else{
+
+echo "<span class='status-cancelled'>🔴 Cancelled</span>";
+
+}
+
+?>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}
+
+else{
+
+?>
+
+<tr>
+
+<td colspan="8" style="text-align:center;">
+
+No bookings found.
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+?>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- ==========================================
+FOOTER
+========================================== -->
+
+<div class="footer">
+
+<p>
+
+© <?php echo date("Y"); ?>
+
+Bus Tracking System |
+
+Company Dashboard
+
+</p>
+
+</div>
+
+</div>
+
+<!-- END MAIN -->
+
+</body>
+
+</html>
+
+
