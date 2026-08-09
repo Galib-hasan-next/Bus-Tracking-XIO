@@ -1,0 +1,161 @@
+<?php
+
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/BusModel.php';
+
+class BusController
+{
+    private $busModel;
+
+    public function __construct()
+    {
+        $database = new Database();
+        $conn = $database->connect();
+
+        $this->busModel = new BusModel($conn);
+    }
+
+    public function viewBuses()
+    {
+        /* ==========================
+           COMPANY LOGIN CHECK
+        ========================== */
+
+        if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'company') {
+
+            header("Location: index.php?page=signin");
+            exit();
+
+        }
+
+        $user_id = (int) $_SESSION['user_id'];
+        $name = $_SESSION['name'] ?? '';
+
+        /* ==========================
+           GET COMPANY ID
+        ========================== */
+
+        $result = $this->busModel->getCompanyByUserId($user_id);
+
+        $company = mysqli_fetch_assoc($result);
+
+        if (!$company) {
+            http_response_code(404);
+            exit('Company profile not found.');
+        }
+
+        $company_id = $company['company_id'];
+
+        /* ==========================
+           SEARCH
+        ========================== */
+
+        $search = isset($_GET['search']) ? trim((string) $_GET['search']) : '';
+
+        /* ==========================
+           GET BUSES
+        ========================== */
+
+        $bus_result = $this->busModel->getBuses($company_id, $search);
+
+        /* ==========================
+           TOTAL BUS COUNT
+        ========================== */
+
+        $count_result = $this->busModel->getBusCount($company_id);
+
+        $count_row = mysqli_fetch_assoc($count_result);
+
+        $total_bus = (int) $count_row['total'];
+
+        /* ==========================
+           LOAD VIEW
+        ========================== */
+
+        include __DIR__ . '/../views/bus/view_buses.php';
+    }
+
+    private function companyId()
+    {
+        if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'company') {
+            header('Location: index.php?page=signin');
+            exit();
+        }
+
+        $result = $this->busModel->getCompanyByUserId((int) $_SESSION['user_id']);
+        $company = mysqli_fetch_assoc($result);
+
+        if (!$company) {
+            header('Location: index.php?page=company_dashboard');
+            exit();
+        }
+
+        return (int) $company['company_id'];
+    }
+
+    private function busInput()
+    {
+        return [
+            'bus_name' => trim($_POST['bus_name'] ?? ''),
+            'bus_number' => trim($_POST['bus_number'] ?? ''),
+            'bus_type' => trim($_POST['bus_type'] ?? ''),
+            'total_seats' => (int) ($_POST['total_seats'] ?? 0),
+            'gps_device_id' => trim($_POST['gps_device_id'] ?? ''),
+            'status' => trim($_POST['status'] ?? ''),
+        ];
+    }
+
+    public function addBus()
+    {
+        $company_id = $this->companyId();
+        $message = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $bus = $this->busInput();
+            if ($this->busModel->busNumberExists($bus['bus_number'], $company_id)) {
+                $message = 'Bus number already exists.';
+            } elseif ($this->busModel->createBus($company_id, $bus)) {
+                header('Location: index.php?page=view_buses&added=1');
+                exit();
+            } else {
+                $message = 'Failed to add bus.';
+            }
+        }
+
+        include __DIR__ . '/../views/bus/add_bus.php';
+    }
+
+    public function editBus()
+    {
+        $company_id = $this->companyId();
+        $bus_id = (int) ($_GET['id'] ?? $_GET['bus_id'] ?? 0);
+        $message = '';
+        $bus = mysqli_fetch_assoc($this->busModel->getBus($bus_id, $company_id));
+
+        if (!$bus) {
+            header('Location: index.php?page=view_buses');
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $input = $this->busInput();
+            if ($this->busModel->busNumberExists($input['bus_number'], $company_id, $bus_id)) {
+                $message = 'Bus number already exists.';
+            } elseif ($this->busModel->updateBus($bus_id, $company_id, $input)) {
+                header('Location: index.php?page=view_buses&updated=1');
+                exit();
+            }
+            $bus = array_merge($bus, $input);
+        }
+
+        include __DIR__ . '/../views/bus/edit_bus.php';
+    }
+
+    public function deleteBus()
+    {
+        $company_id = $this->companyId();
+        $this->busModel->deleteBus((int) ($_GET['id'] ?? 0), $company_id);
+        header('Location: index.php?page=view_buses&deleted=1');
+        exit();
+    }
+}
