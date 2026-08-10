@@ -1,0 +1,433 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Passenger Dashboard</title>
+
+<style>
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+
+}
+
+body{
+
+background:#eef4ff;
+
+}
+
+/* ======================
+SIDEBAR
+====================== */
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:250px;
+height:100vh;
+
+background:#0b2b6d;
+
+overflow:auto;
+
+}
+
+.logo{
+
+padding:30px;
+
+text-align:center;
+
+color:white;
+
+font-size:28px;
+
+font-weight:bold;
+
+border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+.menu{
+
+list-style:none;
+
+padding:20px 0;
+
+}
+
+.menu li{
+
+margin:6px 15px;
+
+}
+
+.menu a{
+
+display:block;
+
+padding:15px;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:10px;
+
+transition:.3s;
+
+}
+
+.menu a:hover{
+
+background:#1d5eff;
+
+}
+
+/* ======================
+MAIN
+====================== */
+
+.main{
+
+margin-left:250px;
+
+padding:35px;
+
+}
+
+.top{
+
+background:white;
+
+padding:30px;
+
+border-radius:18px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+margin-bottom:30px;
+
+}
+
+.top h1{
+
+color:#0b2b6d;
+
+margin-bottom:10px;
+
+}
+
+.top p{
+
+color:#666;
+
+}
+/* ======================
+CARDS
+====================== */
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+gap:25px;
+
+margin-bottom:30px;
+
+}
+
+.card{
+
+background:white;
+
+padding:30px;
+
+border-radius:18px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+text-align:center;
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-5px);
+
+}
+
+.card h2{
+
+font-size:42px;
+
+color:#1d5eff;
+
+margin-bottom:10px;
+
+}
+
+.card p{
+
+color:#666;
+
+font-size:18px;
+
+}
+
+/* ======================
+BUTTON GRID
+====================== */
+
+.actions{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+
+}
+
+.action-btn{
+
+display:block;
+
+background:white;
+
+padding:35px;
+
+border-radius:18px;
+
+text-align:center;
+
+text-decoration:none;
+
+color:#0b2b6d;
+
+font-size:20px;
+
+font-weight:bold;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.action-btn:hover{
+
+background:#1d5eff;
+
+color:white;
+
+transform:translateY(-5px);
+
+}
+
+/* ======================
+FOOTER
+====================== */
+
+.footer{
+
+margin-top:40px;
+
+text-align:center;
+
+color:#777;
+
+padding:25px;
+
+}
+
+/* ======================
+RESPONSIVE
+====================== */
+
+@media(max-width:900px){
+
+.sidebar{
+
+position:relative;
+
+width:100%;
+
+height:auto;
+
+}
+
+.main{
+
+margin-left:0;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<div class="logo">
+
+🚌 BUS TRACKER
+
+</div>
+
+<ul class="menu">
+
+<li><a href="index.php?page=passenger_dashboard">🏠 Dashboard</a></li>
+
+<li><a href="index.php?page=search_bus">🔍 Search Bus</a></li>
+
+<li><a href="index.php?page=my_bookings">🎫 My Bookings</a></li>
+
+<li><a href="index.php?page=passenger_profile">👤 Profile</a></li>
+
+<li><a href="index.php?page=live_tracking">📍 Live Tracking</a></li>
+
+<li><a href="index.php?page=home">🌐 Home</a></li>
+
+<li><a href="index.php?page=logout">🚪 Logout</a></li>
+
+</ul>
+
+</div>
+
+<!-- Main -->
+
+<div class="main">
+
+<div class="top">
+
+<h1>
+
+Welcome,
+
+<?php echo htmlspecialchars($name); ?>
+
+👋
+
+</h1>
+
+<p>
+
+Manage your bookings and quickly access all passenger features.
+
+</p>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+
+<h2>
+
+<?php echo $total_bookings; ?>
+
+</h2>
+
+<p>
+
+Total Bookings
+
+</p>
+
+</div>
+
+</div>
+<div class="actions">
+
+<a href="index.php?page=search_bus" class="action-btn">
+
+🔍<br><br>
+
+Search Bus
+
+</a>
+
+<a href="index.php?page=my_bookings" class="action-btn">
+
+🎫<br><br>
+
+My Bookings
+
+</a>
+
+<a href="index.php?page=passenger_profile" class="action-btn">
+
+👤<br><br>
+
+Profile
+
+</a>
+
+<a href="index.php?page=live_tracking" class="action-btn">
+
+📍<br><br>
+
+Live Tracking
+
+</a>
+
+<a href="index.php?page=home" class="action-btn">
+
+🏠<br><br>
+
+Home
+
+</a>
+
+<a href="index.php?page=logout" class="action-btn">
+
+🚪<br><br>
+
+Logout
+
+</a>
+
+</div>
+
+<div class="footer">
+
+© 2026 Bus Tracker | Passenger Dashboard
+
+</div>
+
+</div>
+
+</body>
+
+</html>

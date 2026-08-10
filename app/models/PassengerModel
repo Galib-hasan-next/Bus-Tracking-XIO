@@ -1,0 +1,45 @@
+<?php
+
+class PassengerModel
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getUserById($user_id)
+    {
+        $user_id = (int) $user_id;
+        return mysqli_query($this->conn, "SELECT * FROM users WHERE user_id='$user_id' LIMIT 1");
+    }
+
+    public function updatePassengerProfile($user_id, $name, $phone)
+    {
+        $user_id = (int) $user_id;
+        $name = mysqli_real_escape_string($this->conn, $name);
+        $phone = mysqli_real_escape_string($this->conn, $phone);
+        return mysqli_query($this->conn, "UPDATE users SET name='$name', phone='$phone' WHERE user_id='$user_id'");
+    }
+
+    public function updatePassword($user_id, $currentPassword, $newPassword)
+    {
+        $user_id = (int) $user_id;
+        $currentPassword = mysqli_real_escape_string($this->conn, $currentPassword);
+        $newPassword = mysqli_real_escape_string($this->conn, $newPassword);
+        $result = mysqli_query($this->conn, "SELECT password FROM users WHERE user_id='$user_id' LIMIT 1");
+        $row = mysqli_fetch_assoc($result);
+        if (!$row || $row['password'] !== $currentPassword) {
+            return false;
+        }
+        return mysqli_query($this->conn, "UPDATE users SET password='$newPassword' WHERE user_id='$user_id'");
+    }
+
+    public function getBookingCount($passenger_id)
+    {
+        $passenger_id = (int) $passenger_id;
+
+        return mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM bookings WHERE passenger_id='$passenger_id'");
+    }
+}
