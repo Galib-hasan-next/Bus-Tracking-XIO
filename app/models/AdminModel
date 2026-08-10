@@ -1,0 +1,24 @@
+<?php
+
+class AdminModel
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getCompanies()
+    {
+        return mysqli_query($this->conn, "SELECT * FROM companies ORDER BY company_id DESC");
+    }
+
+    public function updateCompanyStatus($company_id, $status)
+    {
+        $company_id = (int) $company_id;
+        $status = mysqli_real_escape_string($this->conn, $status);
+
+        return mysqli_query($this->conn, "UPDATE companies SET status='$status' WHERE company_id='$company_id'");
+    }
+}

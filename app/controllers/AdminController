@@ -1,0 +1,49 @@
+<?php
+
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/AdminModel.php';
+
+class AdminController
+{
+    private $adminModel;
+
+    public function __construct()
+    {
+        $database = new Database();
+        $this->adminModel = new AdminModel($database->connect());
+    }
+
+    private function requireAdmin()
+    {
+        if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+            header('Location: index.php?page=signin');
+            exit();
+        }
+    }
+
+    public function dashboard()
+    {
+        $this->requireAdmin();
+        include __DIR__ . '/../views/admin/dashboard.php';
+    }
+
+    public function verifyCompanies()
+    {
+        $this->requireAdmin();
+
+        if (isset($_GET['approve'])) {
+            $this->adminModel->updateCompanyStatus($_GET['approve'], 'approved');
+            header('Location: index.php?page=admin_verify_companies');
+            exit();
+        }
+
+        if (isset($_GET['reject'])) {
+            $this->adminModel->updateCompanyStatus($_GET['reject'], 'rejected');
+            header('Location: index.php?page=admin_verify_companies');
+            exit();
+        }
+
+        $result = $this->adminModel->getCompanies();
+        include __DIR__ . '/../views/admin/verify_companies.php';
+    }
+}
