@@ -1,0 +1,47 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Payment</title>
+<style>
+body{font-family:Segoe UI,sans-serif;background:#eef4ff;margin:0;padding:0;color:#222;} 
+.container{max-width:900px;margin:40px auto;padding:20px;background:#fff;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08);} 
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;} 
+.btn{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:8px;background:#0b2b6d;color:#fff;} 
+.card{padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fbff;} 
+label{display:block;font-weight:bold;margin-top:10px;} 
+input, select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;margin-top:6px;} 
+button{margin-top:15px;padding:10px 16px;border:0;border-radius:8px;background:#1d5eff;color:#fff;cursor:pointer;} 
+.message{padding:12px;border-radius:8px;margin-bottom:15px;background:#e8f7ed;color:#176b3a;} 
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h2>💳 Submit Payment</h2>
+<a class="btn" href="index.php?page=my_bookings">← Back to Bookings</a>
+</div>
+<?php if($message!==''){ echo '<div class="message">'.htmlspecialchars($message).'</div>'; } ?>
+<div class="card">
+<p><strong>Booking ID:</strong> #<?php echo (int)$booking['booking_id']; ?></p>
+<p><strong>Amount:</strong> ৳<?php echo number_format($booking['total_amount'],2); ?></p>
+<form method="POST">
+<label>Payment Method</label>
+<select name="payment_method" required>
+<option value="">Select method</option>
+<option value="bKash">bKash</option>
+<option value="Nagad">Nagad</option>
+</select>
+<label>Transaction ID</label>
+<input type="text" name="transaction_id" required>
+<button type="submit">Submit Payment</button>
+</form>
+</div>
+</div>
+</body>
+</html>
