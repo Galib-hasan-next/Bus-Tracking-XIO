@@ -1,0 +1,109 @@
+<?php
+
+class BusModel
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getCompanyByUserId($userId)
+    {
+        $statement = mysqli_prepare(
+            $this->conn,
+            'SELECT company_id FROM companies WHERE user_id = ? LIMIT 1'
+        );
+        mysqli_stmt_bind_param($statement, 'i', $userId);
+        mysqli_stmt_execute($statement);
+
+        return mysqli_stmt_get_result($statement);
+    }
+
+    public function getBusCount($companyId)
+    {
+        $statement = mysqli_prepare(
+            $this->conn,
+            'SELECT COUNT(*) AS total FROM buses WHERE company_id = ?'
+        );
+        mysqli_stmt_bind_param($statement, 'i', $companyId);
+        mysqli_stmt_execute($statement);
+
+        return mysqli_stmt_get_result($statement);
+    }
+
+    public function getBuses($companyId, $search = '')
+    {
+        if ($search === '') {
+            $statement = mysqli_prepare(
+                $this->conn,
+                'SELECT * FROM buses WHERE company_id = ? ORDER BY bus_id DESC'
+            );
+            mysqli_stmt_bind_param($statement, 'i', $companyId);
+        } else {
+            $searchTerm = '%' . $search . '%';
+            $statement = mysqli_prepare(
+                $this->conn,
+                'SELECT * FROM buses
+                 WHERE company_id = ?
+                 AND (bus_name LIKE ? OR bus_number LIKE ? OR bus_type LIKE ?)
+                 ORDER BY bus_id DESC'
+            );
+            mysqli_stmt_bind_param(
+                $statement,
+                'isss',
+                $companyId,
+                $searchTerm,
+                $searchTerm,
+                $searchTerm
+            );
+        }
+
+        mysqli_stmt_execute($statement);
+
+        return mysqli_stmt_get_result($statement);
+    }
+
+    public function getBus($busId, $companyId)
+    {
+        $statement = mysqli_prepare($this->conn, 'SELECT * FROM buses WHERE bus_id = ? AND company_id = ?');
+        mysqli_stmt_bind_param($statement, 'ii', $busId, $companyId);
+        mysqli_stmt_execute($statement);
+
+        return mysqli_stmt_get_result($statement);
+    }
+
+    public function busNumberExists($busNumber, $companyId, $excludeBusId = 0)
+    {
+        $statement = mysqli_prepare($this->conn, 'SELECT bus_id FROM buses WHERE bus_number = ? AND company_id = ? AND bus_id != ?');
+        mysqli_stmt_bind_param($statement, 'sii', $busNumber, $companyId, $excludeBusId);
+        mysqli_stmt_execute($statement);
+
+        return mysqli_num_rows(mysqli_stmt_get_result($statement)) > 0;
+    }
+
+    public function createBus($companyId, $bus)
+    {
+        $statement = mysqli_prepare($this->conn, 'INSERT INTO buses (company_id, bus_name, bus_number, bus_type, total_seats, gps_device_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        mysqli_stmt_bind_param($statement, 'isssiss', $companyId, $bus['bus_name'], $bus['bus_number'], $bus['bus_type'], $bus['total_seats'], $bus['gps_device_id'], $bus['status']);
+
+        return mysqli_stmt_execute($statement);
+    }
+
+    public function updateBus($busId, $companyId, $bus)
+    {
+        $statement = mysqli_prepare($this->conn, 'UPDATE buses SET bus_name = ?, bus_number = ?, bus_type = ?, total_seats = ?, gps_device_id = ?, status = ? WHERE bus_id = ? AND company_id = ?');
+        mysqli_stmt_bind_param($statement, 'sssissii', $bus['bus_name'], $bus['bus_number'], $bus['bus_type'], $bus['total_seats'], $bus['gps_device_id'], $bus['status'], $busId, $companyId);
+
+        return mysqli_stmt_execute($statement);
+    }
+
+    public function deleteBus($busId, $companyId)
+    {
+        $statement = mysqli_prepare($this->conn, 'DELETE FROM buses WHERE bus_id = ? AND company_id = ?');
+        mysqli_stmt_bind_param($statement, 'ii', $busId, $companyId);
+
+        return mysqli_stmt_execute($statement);
+    }
+}

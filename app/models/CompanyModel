@@ -1,0 +1,195 @@
+<?php
+
+class CompanyModel
+{
+    private $conn;
+
+    public function __construct($db)
+    {
+        $this->conn = $db;
+    }
+
+    // Get company information
+    public function getCompanyByUserId($user_id)
+    {
+        $sql = "
+        SELECT *
+        FROM companies
+        WHERE user_id='$user_id'
+        LIMIT 1
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Total buses
+    public function getTotalBuses($company_id)
+    {
+        $sql = "
+        SELECT COUNT(*) AS total
+        FROM buses
+        WHERE company_id='$company_id'
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Active buses
+    public function getActiveBuses($company_id)
+    {
+        $sql = "
+        SELECT COUNT(*) AS total
+        FROM buses
+        WHERE company_id='$company_id'
+        AND status='Active'
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Total routes
+    public function getTotalRoutes($company_id)
+    {
+        $sql = "
+        SELECT COUNT(*) AS total
+        FROM routes
+        WHERE company_id='$company_id'
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Total bookings
+    public function getTotalBookings($company_id)
+    {
+        $sql = "
+        SELECT COUNT(*) AS total
+        FROM bookings b
+        INNER JOIN buses bus
+        ON b.bus_id = bus.bus_id
+        WHERE bus.company_id='$company_id'
+        AND b.booking_status IN ('Confirmed','Completed')
+        AND b.payment_status='Verified'
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Tickets sold
+    public function getTicketsSold($company_id)
+    {
+        $sql = "
+        SELECT SUM(b.total_seats) AS total
+        FROM bookings b
+        INNER JOIN buses bus
+        ON b.bus_id = bus.bus_id
+        WHERE bus.company_id='$company_id'
+        AND b.booking_status IN ('Confirmed','Completed')
+        AND b.payment_status='Verified'
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Revenue
+    public function getRevenue($company_id)
+    {
+        $sql = "
+        SELECT SUM(total_amount) AS total
+        FROM bookings b
+        INNER JOIN buses bus
+        ON b.bus_id = bus.bus_id
+        WHERE bus.company_id='$company_id'
+        AND b.booking_status='Confirmed'
+        AND b.payment_status='Verified'
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Recent buses
+    public function getRecentBuses($company_id)
+    {
+        $sql = "
+        SELECT *
+        FROM buses
+        WHERE company_id='$company_id'
+        ORDER BY bus_id DESC
+        LIMIT 5
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Recent routes
+    public function getRecentRoutes($company_id)
+    {
+        $sql = "
+        SELECT *
+        FROM routes
+        WHERE company_id='$company_id'
+        ORDER BY route_id DESC
+        LIMIT 5
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    // Recent bookings
+    public function getRecentBookings($company_id)
+    {
+        $sql = "
+        SELECT
+        b.booking_id,
+        b.journey_date,
+        b.seat_numbers,
+        b.total_amount,
+        b.booking_status,
+        u.name AS passenger_name,
+        bus.bus_name,
+        r.route_name
+
+        FROM bookings b
+
+        INNER JOIN users u
+        ON b.passenger_id=u.user_id
+
+        INNER JOIN buses bus
+        ON b.bus_id=bus.bus_id
+
+        INNER JOIN routes r
+        ON b.route_id=r.route_id
+
+        WHERE bus.company_id='$company_id'
+
+        ORDER BY b.booking_id DESC
+
+        LIMIT 5
+        ";
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    public function updateCompanyProfile($company_id, $data)
+    {
+        $company_id = (int) $company_id;
+        $company_name = mysqli_real_escape_string($this->conn, $data['company_name']);
+        $email = mysqli_real_escape_string($this->conn, $data['email']);
+        $phone = mysqli_real_escape_string($this->conn, $data['phone']);
+        $address = mysqli_real_escape_string($this->conn, $data['address']);
+
+        return mysqli_query($this->conn, "UPDATE companies SET company_name='$company_name', email='$email', phone='$phone', address='$address' WHERE company_id='$company_id'");
+    }
+
+    public function getBusReportStats($company_id)
+    {
+        $company_id = (int) $company_id;
+        return mysqli_query($this->conn, "SELECT b.bus_name, (SELECT COUNT(*) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_bookings, (SELECT COALESCE(SUM(total_seats),0) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_tickets, (SELECT COALESCE(SUM(total_amount),0) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status='Confirmed' AND bk.payment_status='Verified') AS total_revenue FROM buses b WHERE b.company_id='$company_id' ORDER BY b.bus_name ASC");
+    }
+
+    public function getRouteReportStats($company_id)
+    {
+        $company_id = (int) $company_id;
+        return mysqli_query($this->conn, "SELECT r.route_name, (SELECT COUNT(*) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_bookings, (SELECT COALESCE(SUM(total_seats),0) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_tickets, (SELECT COALESCE(SUM(total_amount),0) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status='Confirmed' AND bk.payment_status='Verified') AS total_revenue FROM routes r WHERE r.company_id='$company_id' ORDER BY r.route_name ASC");
+    }
+}
