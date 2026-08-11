@@ -1,0 +1,666 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>My Bookings</title>
+
+<style>
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+
+}
+
+body{
+
+background:#eef4ff;
+
+}
+
+.header{
+
+background:#0b2b6d;
+
+color:white;
+
+padding:20px 40px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.logo{
+
+font-size:28px;
+
+font-weight:bold;
+
+}
+
+.header a{
+
+color:white;
+
+text-decoration:none;
+
+font-weight:bold;
+
+}
+
+.container{
+
+max-width:1300px;
+
+margin:40px auto;
+
+padding:20px;
+
+}
+
+.title{
+
+margin-bottom:30px;
+
+}
+
+.title h1{
+
+color:#0b2b6d;
+
+margin-bottom:8px;
+
+}
+
+.title p{
+
+color:#666;
+
+}
+
+.table-box{
+
+background:white;
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+overflow-x:auto;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+table th{
+
+background:#0b2b6d;
+
+color:white;
+
+padding:15px;
+
+text-align:left;
+
+}
+
+table td{
+
+padding:15px;
+
+border-bottom:1px solid #eee;
+
+}
+
+tr:hover{
+
+background:#f8fbff;
+
+}
+
+.status-paid{
+
+color:green;
+
+font-weight:bold;
+
+}
+
+.status-pending{
+
+color:orange;
+
+font-weight:bold;
+
+}
+
+.status-booked{
+
+color:green;
+
+font-weight:bold;
+
+}
+
+.status-cancelled{
+
+color:red;
+
+font-weight:bold;
+
+}
+
+.btn{
+
+padding:8px 16px;
+
+border-radius:8px;
+
+text-decoration:none;
+
+color:white;
+
+font-size:14px;
+
+margin-right:5px;
+
+display:inline-block;
+
+}
+
+.view{
+
+background:#1d5eff;
+
+}
+
+.cancel{
+
+background:#dc3545;
+
+}
+
+.view:hover{
+
+background:#0b45d1;
+
+}
+
+.cancel:hover{
+
+background:#b02a37;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<div class="logo">
+
+🚌 BUS TRACKER
+
+</div>
+
+<div>
+
+Welcome,
+
+<strong>
+
+<?php echo htmlspecialchars($name); ?>
+
+</strong>
+
+|
+
+<a href="index.php?page=home">Home</a>
+
+</div>
+
+</div>
+
+<div class="container">
+
+<div class="title">
+
+<h1>
+
+My Bookings
+
+</h1>
+
+<p>
+
+View all your booked bus tickets.
+
+</p>
+
+</div>
+
+<div class="table-box">
+
+<table>
+
+<tr>
+
+<th>ID</th>
+
+<th>Bus</th>
+
+<th>Company</th>
+
+<th>Route</th>
+
+<th>Date</th>
+
+<th>Seats</th>
+
+<th>Amount</th>
+
+<th>Payment</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+<?php
+
+if(mysqli_num_rows($result)>0){
+
+while($row=mysqli_fetch_assoc($result)){
+
+?>
+
+<tr>
+
+<td>
+
+<?php echo $row['booking_id']; ?>
+
+</td>
+
+<td>
+
+<strong>
+
+<?php echo htmlspecialchars($row['bus_name']); ?>
+
+</strong>
+
+<br>
+
+<small>
+
+<?php echo htmlspecialchars($row['bus_number']); ?>
+
+</small>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['company_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['starting_point']); ?>
+
+<br>
+
+↓
+
+<br>
+
+<?php echo htmlspecialchars($row['destination']); ?>
+
+</td>
+
+<td>
+
+<?php echo date("d M Y",strtotime($row['journey_date'])); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['seat_numbers']); ?>
+
+</td>
+
+<td>
+
+<strong>
+
+৳<?php echo number_format($row['total_amount'],2); ?>
+
+</strong>
+
+</td>
+
+<td>
+
+<?php
+
+if($row['payment_status']=="Verified"){
+
+?>
+
+<span class="status-paid">
+
+Verified
+
+</span>
+
+<?php
+
+}elseif($row['payment_status']=="Submitted"){
+
+?>
+
+<span class="status-pending">
+
+Submitted
+
+</span>
+
+<?php
+
+}elseif($row['payment_status']=="Rejected"){
+
+?>
+
+<span class="status-cancelled">
+
+Rejected
+
+</span>
+
+<?php
+
+}else{
+
+?>
+
+<span class="status-pending">
+
+Pending
+
+</span>
+
+<?php
+
+}
+
+?>
+
+</td>
+
+<td>
+
+<?php
+
+if($row['booking_status']=="Confirmed"){
+
+?>
+
+<span class="status-paid">
+
+Confirmed
+
+</span>
+
+<?php
+
+}elseif($row['booking_status']=="Booked"){
+
+?>
+
+<span class="status-booked">
+
+Booked
+
+</span>
+
+<?php
+
+}else{
+
+?>
+
+<span class="status-cancelled">
+
+<?php echo htmlspecialchars($row['booking_status']); ?>
+
+</span>
+
+<?php
+
+}
+
+?>
+
+</td>
+
+<td>
+
+<a
+
+href="index.php?page=booking_details&booking_id=<?php echo $row['booking_id']; ?>"
+
+class="btn view">
+
+View
+
+</a>
+
+<?php
+
+if($row['booking_status'] !== 'Confirmed' && $row['payment_status'] !== 'Verified' && $row['booking_status'] !== 'Cancelled'){
+
+?>
+
+<a
+
+href="index.php?page=payment&booking_id=<?php echo $row['booking_id']; ?>"
+
+class="btn view">
+
+Pay
+
+</a>
+
+<?php
+
+}
+
+if($row['booking_status']=="Confirmed" && $row['payment_status']=="Verified"){
+
+?>
+
+<a
+
+href="index.php?page=confirmed_ticket&booking_id=<?php echo $row['booking_id']; ?>"
+
+class="btn view">
+
+Ticket
+
+</a>
+
+<?php
+
+}
+
+if($row['booking_status']=="Booked"){
+
+?>
+
+<a
+
+href="index.php?page=passenger_cancel_booking&booking_id=<?php echo $row['booking_id']; ?>"
+
+class="btn cancel"
+
+onclick="return confirm('Are you sure you want to cancel this booking?');">
+
+Cancel
+
+</a>
+
+<?php
+
+}
+
+?>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<tr>
+
+<td colspan="10" style="text-align:center;padding:40px;">
+
+<h3>
+
+No bookings found.
+
+</h3>
+
+<p style="margin-top:10px;color:#777;">
+
+You haven't booked any bus tickets yet.
+
+</p>
+
+<br>
+
+<a
+
+href="index.php?page=search_bus"
+
+class="btn view">
+
+🔍 Search Buses
+
+</a>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+?>
+</table>
+
+</div>
+
+<div style="
+margin-top:30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+">
+
+<a
+href="index.php?page=search_bus"
+class="btn view">
+
+🚌 Book Another Ticket
+
+</a>
+
+<a
+href="index.php?page=home"
+class="btn view">
+
+🏠 Back to Home
+
+</a>
+
+</div>
+
+</div>
+
+<footer style="
+margin-top:50px;
+background:#0b2b6d;
+color:white;
+text-align:center;
+padding:30px 20px;
+">
+
+<h3 style="margin-bottom:10px;">
+
+🚌 BUS TRACKER
+
+</h3>
+
+<p>
+
+Manage all your bus bookings in one place.
+
+</p>
+
+<div style="
+margin-top:20px;
+font-size:15px;
+opacity:.85;
+">
+
+© 2026 Bus Tracker | Passenger Booking Portal
+
+</div>
+
+</footer>
+
+</body>
+
+</html>
