@@ -1,0 +1,61 @@
+<?php
+
+class TrackingModel
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getBus($bus_id)
+    {
+        $bus_id = (int) $bus_id;
+
+        return mysqli_query(
+            $this->conn,
+            "SELECT
+                buses.bus_id,
+                buses.bus_name,
+                buses.bus_number,
+                companies.company_name,
+                routes.route_id,
+                routes.route_name,
+                routes.starting_point,
+                routes.destination
+            FROM buses
+            INNER JOIN companies ON buses.company_id = companies.company_id
+            INNER JOIN routes ON buses.bus_id = routes.bus_id
+            WHERE buses.bus_id='$bus_id'
+            LIMIT 1"
+        );
+    }
+
+    public function getLocation($bus_id)
+    {
+        $bus_id = (int) $bus_id;
+
+        return mysqli_query($this->conn, "SELECT * FROM bus_locations WHERE bus_id='$bus_id' ORDER BY location_id DESC LIMIT 1");
+    }
+
+    public function getRoutePoints($route_id)
+    {
+        $route_id = (int) $route_id;
+        return mysqli_query($this->conn, "SELECT stop_name, latitude, longitude, point_order FROM route_points WHERE route_id='$route_id' ORDER BY point_order ASC");
+    }
+
+    public function updateLocations()
+    {
+        $result = mysqli_query($this->conn, 'SELECT * FROM bus_locations');
+        while ($row = mysqli_fetch_assoc($result)) {
+            $latitude = $row['latitude'] + (rand(-5, 5) / 10000);
+            $longitude = $row['longitude'] + (rand(-5, 5) / 10000);
+            if ($latitude > 23.950000 || $latitude < 23.700000) $latitude = 23.810332;
+            if ($longitude > 90.550000 || $longitude < 90.300000) $longitude = 90.412518;
+            $speed = rand(25, 65);
+            $locationId = (int) $row['location_id'];
+            mysqli_query($this->conn, "UPDATE bus_locations SET latitude='$latitude', longitude='$longitude', speed='$speed' WHERE location_id='$locationId'");
+        }
+    }
+}

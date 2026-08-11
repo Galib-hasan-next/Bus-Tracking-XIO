@@ -1,0 +1,60 @@
+<?php
+
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/TrackingModel.php';
+
+class TrackingController
+{
+    private $trackingModel;
+
+    public function __construct()
+    {
+        $database = new Database();
+        $this->trackingModel = new TrackingModel($database->connect());
+    }
+
+    public function liveTracking()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?page=signin');
+            exit();
+        }
+
+        $bus_id = (int) ($_GET['bus_id'] ?? 0);
+        $result = $this->trackingModel->getBus($bus_id);
+        $bus = mysqli_fetch_assoc($result);
+
+        if (!$bus) {
+            http_response_code(404);
+            exit('Bus or Route not found.');
+        }
+
+        $route_id = $bus['route_id'];
+
+        include __DIR__ . '/../views/tracking/live_tracking.php';
+    }
+
+    public function getLocation()
+    {
+        header('Content-Type: application/json');
+        $result = $this->trackingModel->getLocation($_GET['bus_id'] ?? 0);
+        echo json_encode(mysqli_fetch_assoc($result) ?: []);
+    }
+
+    public function getRoutePoints()
+    {
+        header('Content-Type: application/json');
+        $result = $this->trackingModel->getRoutePoints($_GET['route_id'] ?? 0);
+        $points = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $points[] = $row;
+        }
+        echo json_encode(['status' => 'success', 'points' => $points]);
+    }
+
+    public function updateLocation()
+    {
+        $this->trackingModel->updateLocations();
+        echo 'GPS Updated Successfully';
+    }
+}
