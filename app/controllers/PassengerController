@@ -1,178 +1,45 @@
 <?php
 
-require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../models/PassengerModel.php';
-require_once __DIR__ . '/../models/BookingModel.php';
-
-class PassengerController
+class PassengerModel
 {
-    private $passengerModel;
-    private $bookingModel;
+    private $conn;
 
-    public function __construct()
+    public function __construct($conn)
     {
-        $database = new Database();
-        $conn = $database->connect();
-        $this->passengerModel = new PassengerModel($conn);
-        $this->bookingModel = new BookingModel($conn);
+        $this->conn = $conn;
     }
 
-    private function requirePassenger()
+    public function getUserById($user_id)
     {
-        if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'passenger') {
-            header('Location: index.php?page=signin');
-            exit();
+        $user_id = (int) $user_id;
+        return mysqli_query($this->conn, "SELECT * FROM users WHERE user_id='$user_id' LIMIT 1");
+    }
+
+    public function updatePassengerProfile($user_id, $name, $phone)
+    {
+        $user_id = (int) $user_id;
+        $name = mysqli_real_escape_string($this->conn, $name);
+        $phone = mysqli_real_escape_string($this->conn, $phone);
+        return mysqli_query($this->conn, "UPDATE users SET name='$name', phone='$phone' WHERE user_id='$user_id'");
+    }
+
+    public function updatePassword($user_id, $currentPassword, $newPassword)
+    {
+        $user_id = (int) $user_id;
+        $currentPassword = mysqli_real_escape_string($this->conn, $currentPassword);
+        $newPassword = mysqli_real_escape_string($this->conn, $newPassword);
+        $result = mysqli_query($this->conn, "SELECT password FROM users WHERE user_id='$user_id' LIMIT 1");
+        $row = mysqli_fetch_assoc($result);
+        if (!$row || $row['password'] !== $currentPassword) {
+            return false;
         }
+        return mysqli_query($this->conn, "UPDATE users SET password='$newPassword' WHERE user_id='$user_id'");
     }
 
-    public function dashboard()
+    public function getBookingCount($passenger_id)
     {
-        $this->requirePassenger();
-        $name = $_SESSION['name'] ?? '';
-        $count_result = $this->passengerModel->getBookingCount($_SESSION['user_id']);
-        $total_bookings = mysqli_fetch_assoc($count_result)['total'];
-        include __DIR__ . '/../views/passenger/dashboard.php';
-    }
+        $passenger_id = (int) $passenger_id;
 
-    public function profile()
-    {
-        $this->requirePassenger();
-        $name = $_SESSION['name'] ?? '';
-        $user = mysqli_fetch_assoc($this->passengerModel->getUserById($_SESSION['user_id']));
-        if (!$user) {
-            header('Location: index.php?page=passenger_dashboard');
-            exit();
-        }
-        include __DIR__ . '/../views/passenger/profile.php';
-    }
-
-    public function editProfile()
-    {
-        $this->requirePassenger();
-        $name = $_SESSION['name'] ?? '';
-        $message = '';
-        $user = mysqli_fetch_assoc($this->passengerModel->getUserById($_SESSION['user_id']));
-        if (!$user) {
-            header('Location: index.php?page=passenger_dashboard');
-            exit();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $updatedName = trim($_POST['name'] ?? '');
-            $updatedPhone = trim($_POST['phone'] ?? '');
-            if ($updatedName === '' || $updatedPhone === '') {
-                $message = 'Name and phone are required.';
-            } elseif ($this->passengerModel->updatePassengerProfile($_SESSION['user_id'], $updatedName, $updatedPhone)) {
-                $_SESSION['name'] = $updatedName;
-                $user['name'] = $updatedName;
-                $user['phone'] = $updatedPhone;
-                $message = 'Profile updated successfully.';
-            } else {
-                $message = 'Profile update failed.';
-            }
-        }
-
-        include __DIR__ . '/../views/passenger/edit_profile.php';
-    }
-
-    public function changePassword()
-    {
-        $this->requirePassenger();
-        $name = $_SESSION['name'] ?? '';
-        $message = '';
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $currentPassword = $_POST['current_password'] ?? '';
-            $newPassword = $_POST['new_password'] ?? '';
-            $confirmPassword = $_POST['confirm_password'] ?? '';
-            if ($newPassword === '' || $confirmPassword === '') {
-                $message = 'New password fields are required.';
-            } elseif ($newPassword !== $confirmPassword) {
-                $message = 'New password and confirmation do not match.';
-            } elseif ($this->passengerModel->updatePassword($_SESSION['user_id'], $currentPassword, $newPassword)) {
-                $message = 'Password changed successfully.';
-            } else {
-                $message = 'Current password is incorrect.';
-            }
-        }
-        include __DIR__ . '/../views/passenger/change_password.php';
-    }
-
-    public function myBookings()
-    {
-        $this->requirePassenger();
-        $name = $_SESSION['name'] ?? '';
-        $result = $this->bookingModel->getPassengerBookings($_SESSION['user_id']);
-        include __DIR__ . '/../views/passenger/my_bookings.php';
-    }
-
-    public function bookingDetails($success = false)
-    {
-        $this->requirePassenger();
-        $booking_id = (int) ($_GET['booking_id'] ?? 0);
-        $booking = mysqli_fetch_assoc($this->bookingModel->getBooking($booking_id, $_SESSION['user_id']));
-        if (!$booking) { header('Location: index.php?page=my_bookings'); exit(); }
-        include __DIR__ . '/../views/booking/' . ($success ? 'success.php' : 'details.php');
-    }
-
-    public function payment()
-    {
-        $this->requirePassenger();
-        $name = $_SESSION['name'] ?? '';
-        $booking_id = (int) ($_GET['booking_id'] ?? 0);
-        $booking = mysqli_fetch_assoc($this->bookingModel->getBooking($booking_id, $_SESSION['user_id']));
-        $message = '';
-
-        if (!$booking) {
-            header('Location: index.php?page=my_bookings');
-            exit();
-        }
-
-        if ($booking['booking_status'] === 'Cancelled') {
-            $message = 'This booking has been cancelled.';
-        } elseif ($booking['booking_status'] === 'Confirmed') {
-            $message = 'This booking is already confirmed.';
-        } elseif ($booking['payment_status'] === 'Submitted') {
-            $message = 'Payment is already submitted and pending verification.';
-        } elseif ($booking['payment_status'] === 'Verified') {
-            $message = 'Payment is already verified.';
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $paymentMethod = trim($_POST['payment_method'] ?? '');
-            $transactionId = trim($_POST['transaction_id'] ?? '');
-            if (!in_array($paymentMethod, ['bKash', 'Nagad'], true)) {
-                $message = 'Select a valid payment method.';
-            } elseif ($transactionId === '') {
-                $message = 'Transaction ID is required.';
-            } elseif ($this->bookingModel->submitPayment($booking_id, $_SESSION['user_id'], $paymentMethod, $transactionId)) {
-                header('Location: index.php?page=payment&booking_id=' . $booking_id . '&submitted=1');
-                exit();
-            } else {
-                $message = 'Payment submission failed.';
-            }
-        }
-
-        include __DIR__ . '/../views/passenger/payment.php';
-    }
-
-    public function confirmedTicket()
-    {
-        $this->requirePassenger();
-        $name = $_SESSION['name'] ?? '';
-        $booking_id = (int) ($_GET['booking_id'] ?? 0);
-        $booking = mysqli_fetch_assoc($this->bookingModel->getBooking($booking_id, $_SESSION['user_id']));
-        if (!$booking || $booking['booking_status'] !== 'Confirmed' || $booking['payment_status'] !== 'Verified') {
-            header('Location: index.php?page=my_bookings');
-            exit();
-        }
-        include __DIR__ . '/../views/passenger/ticket.php';
-    }
-
-    public function cancelBooking()
-    {
-        $this->requirePassenger();
-        $booking_id = (int) ($_GET['booking_id'] ?? 0);
-        if (mysqli_fetch_assoc($this->bookingModel->getBooking($booking_id, $_SESSION['user_id']))) $this->bookingModel->updateStatus($booking_id, 'Cancelled');
-        header('Location: index.php?page=my_bookings&cancel=success'); exit();
+        return mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM bookings WHERE passenger_id='$passenger_id'");
     }
 }
