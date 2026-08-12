@@ -1,0 +1,82 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Reports</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{background:#f4f8ff;color:#1e293b;}
+.sidebar{width:260px;min-height:100vh;background:#0b2b6d;color:#fff;padding:30px;position:fixed;left:0;top:0;}
+.logo{font-size:30px;font-weight:bold;margin-bottom:40px;}
+.sidebar ul{list-style:none;}
+.sidebar ul li{margin:18px 0;}
+.sidebar ul li a{text-decoration:none;color:#fff;font-size:16px;display:block;padding:10px 12px;border-radius:10px;}
+.sidebar ul li a:hover,.sidebar ul li a.active{background:#1d5eff;}
+.main{margin-left:260px;padding:35px;}
+.topbar{background:#fff;padding:22px 28px;border-radius:18px;box-shadow:0 5px 20px rgba(0,0,0,.08);margin-bottom:25px;}
+.topbar h1{color:#0b2b6d;margin-bottom:8px;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:24px;}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 5px 18px rgba(0,0,0,.08);} 
+.card h3{color:#475569;margin-bottom:8px;font-size:16px;}
+.card .number{font-size:28px;font-weight:bold;color:#0b2b6d;margin-bottom:6px;}
+.card p{color:#64748b;font-size:13px;}
+.section{background:#fff;border-radius:16px;padding:22px;box-shadow:0 5px 18px rgba(0,0,0,.08);margin-bottom:24px;}
+.section h2{color:#0b2b6d;margin-bottom:15px;font-size:22px;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:14px;}
+th{background:#f8fafc;color:#334155;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+<div class="logo">🚌 BUS TRACKER</div>
+<ul>
+<li><a href="index.php?page=company_dashboard">🏠 Dashboard</a></li>
+<li><a href="index.php?page=company_reports">📊 Reports</a></li>
+<li><a href="index.php?page=company_profile">🏢 Profile</a></li>
+<li><a href="index.php?page=logout">🚪 Logout</a></li>
+</ul>
+</div>
+<div class="main">
+<div class="topbar">
+<h1>📊 Company Reports</h1>
+<p>Welcome, <?php echo htmlspecialchars($name); ?></p>
+</div>
+<div class="cards">
+<div class="card"><h3>Total Buses</h3><div class="number"><?php echo (int) ($stats['total_buses'] ?? 0); ?></div><p>Registered buses</p></div>
+<div class="card"><h3>Active Buses</h3><div class="number"><?php echo (int) ($stats['active_buses'] ?? 0); ?></div><p>Currently active</p></div>
+<div class="card"><h3>Total Routes</h3><div class="number"><?php echo (int) ($stats['total_routes'] ?? 0); ?></div><p>Routes under your company</p></div>
+<div class="card"><h3>Total Bookings</h3><div class="number"><?php echo (int) ($stats['total_bookings'] ?? 0); ?></div><p>Booked and completed</p></div>
+<div class="card"><h3>Tickets Sold</h3><div class="number"><?php echo (int) ($stats['tickets_sold'] ?? 0); ?></div><p>Total seats booked</p></div>
+<div class="card"><h3>Revenue</h3><div class="number">৳<?php echo number_format((float) ($stats['revenue'] ?? 0), 2); ?></div><p>Paid bookings only</p></div>
+</div>
+<div class="section">
+<h2>Bus-wise Statistics</h2>
+<table>
+<thead><tr><th>Bus</th><th>Bookings</th><th>Tickets</th><th>Revenue</th></tr></thead>
+<tbody>
+<?php if (!empty($busStats)) { foreach ($busStats as $row) { ?>
+<tr><td><?php echo htmlspecialchars($row['bus_name']); ?></td><td><?php echo (int) $row['total_bookings']; ?></td><td><?php echo (int) $row['total_tickets']; ?></td><td>৳<?php echo number_format((float) ($row['total_revenue'] ?? 0), 2); ?></td></tr>
+<?php } } else { ?><tr><td colspan="4">No bus statistics available.</td></tr><?php } ?>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h2>Route-wise Statistics</h2>
+<table>
+<thead><tr><th>Route</th><th>Bookings</th><th>Tickets</th><th>Revenue</th></tr></thead>
+<tbody>
+<?php if (!empty($routeStats)) { foreach ($routeStats as $row) { ?>
+<tr><td><?php echo htmlspecialchars($row['route_name']); ?></td><td><?php echo (int) $row['total_bookings']; ?></td><td><?php echo (int) $row['total_tickets']; ?></td><td>৳<?php echo number_format((float) ($row['total_revenue'] ?? 0), 2); ?></td></tr>
+<?php } } else { ?><tr><td colspan="4">No route statistics available.</td></tr><?php } ?>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>
