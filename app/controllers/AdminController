@@ -24,6 +24,7 @@ class AdminController
     public function dashboard()
     {
         $this->requireAdmin();
+        $name = $_SESSION['name'] ?? 'Admin';
         include __DIR__ . '/../views/admin/dashboard.php';
     }
 
@@ -45,5 +46,15 @@ class AdminController
 
         $result = $this->adminModel->getCompanies();
         include __DIR__ . '/../views/admin/verify_companies.php';
+    }
+
+    public function reports()
+    {
+        $this->requireAdmin();
+        $name = $_SESSION['name'] ?? 'Admin';
+        $stats = $this->adminModel->getDashboardStats();
+        $bookingBreakdown = $this->adminModel->getBookingBreakdown();
+        $companyStats = $this->adminModel->getCompanyStats();
+        include __DIR__ . '/../views/admin/reports.php';
     }
 }
