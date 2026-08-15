@@ -1,0 +1,715 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>View Routes</title>
+
+<style>
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+
+}
+
+body{
+
+background:#eef4ff;
+
+}
+
+/* Sidebar */
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:260px;
+height:100vh;
+
+background:#0b2b6d;
+
+overflow:auto;
+
+}
+
+.logo{
+
+padding:30px;
+
+font-size:28px;
+
+font-weight:bold;
+
+color:white;
+
+text-align:center;
+
+border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+.menu{
+
+list-style:none;
+
+padding:20px 0;
+
+}
+
+.menu li{
+
+margin:6px 15px;
+
+}
+
+.menu a{
+
+display:block;
+
+padding:15px;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:12px;
+
+transition:.3s;
+
+}
+
+.menu a:hover{
+
+background:#1d5eff;
+
+}
+
+.main{
+
+margin-left:260px;
+
+padding:35px;
+
+}
+
+.top{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+margin-bottom:30px;
+
+}
+
+.top h1{
+
+color:#0b2b6d;
+
+margin-bottom:10px;
+
+}
+
+.top p{
+
+color:#666;
+
+}
+
+.search-box{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+margin-bottom:30px;
+
+}
+
+.search-box form{
+
+display:flex;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+}
+
+.search-box input{
+
+flex:1;
+
+padding:15px;
+
+border:1px solid #ccc;
+
+border-radius:10px;
+
+font-size:16px;
+
+}
+
+.search-box button{
+
+padding:15px 25px;
+
+background:#1d5eff;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+}
+
+.search-box button:hover{
+
+background:#0b45d1;
+
+}
+/* Statistics */
+
+.stats{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+margin-bottom:30px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+flex-wrap:wrap;
+
+}
+
+.stats h2{
+
+color:#0b2b6d;
+
+}
+
+.total{
+
+font-size:40px;
+
+font-weight:bold;
+
+color:#1d5eff;
+
+}
+
+/* Table */
+
+.table-box{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.table-box h2{
+
+color:#0b2b6d;
+
+margin-bottom:20px;
+
+}
+
+.table-responsive{
+
+overflow-x:auto;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+table th{
+
+background:#0b2b6d;
+
+color:white;
+
+padding:15px;
+
+text-align:left;
+
+}
+
+table td{
+
+padding:15px;
+
+border-bottom:1px solid #eee;
+
+}
+
+table tr:hover{
+
+background:#f8fbff;
+
+}
+
+.active{
+
+color:green;
+
+font-weight:bold;
+
+}
+
+.inactive{
+
+color:red;
+
+font-weight:bold;
+
+}
+
+/* Buttons */
+
+.edit-btn{
+
+display:inline-block;
+
+padding:8px 15px;
+
+background:#1d5eff;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:8px;
+
+margin-right:8px;
+
+transition:.3s;
+
+}
+
+.edit-btn:hover{
+
+background:#0b45d1;
+
+}
+
+.delete-btn{
+
+display:inline-block;
+
+padding:8px 15px;
+
+background:#dc3545;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:8px;
+
+transition:.3s;
+
+}
+
+.delete-btn:hover{
+
+background:#b52a37;
+
+}
+
+.add-btn{
+
+display:inline-block;
+
+margin-top:20px;
+
+padding:15px 30px;
+
+background:#28a745;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:10px;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+.add-btn:hover{
+
+background:#218838;
+
+}
+
+/* Responsive */
+
+@media(max-width:900px){
+
+.sidebar{
+
+position:relative;
+
+width:100%;
+
+height:auto;
+
+}
+
+.main{
+
+margin-left:0;
+
+}
+
+.stats{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:15px;
+
+}
+
+.search-box form{
+
+flex-direction:column;
+
+}
+
+.search-box input{
+
+width:100%;
+
+}
+
+.search-box button{
+
+width:100%;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<div class="logo">
+
+🚌 BUS TRACKER
+
+</div>
+
+<ul class="menu">
+
+<li><a href="index.php?page=company_dashboard">🏠 Dashboard</a></li>
+
+<li><a href="index.php?page=add_bus">🚌 Add Bus</a></li>
+
+<li><a href="index.php?page=view_buses">🚍 View Buses</a></li>
+
+<li><a href="index.php?page=add_route">🛣 Add Route</a></li>
+
+<li><a href="index.php?page=view_routes">📍 View Routes</a></li>
+
+<li><a href="#">🎫 Bookings</a></li>
+
+<li><a href="#">📊 Analytics</a></li>
+
+<li><a href="index.php?page=logout">🚪 Logout</a></li>
+
+</ul>
+
+</div>
+
+<!-- Main -->
+
+<div class="main">
+
+<div class="top">
+
+<h1>View Routes</h1>
+
+<p>
+
+Manage all routes registered under your company.
+
+</p>
+
+</div>
+
+<div class="search-box">
+
+<form method="GET">
+
+<input
+
+type="text"
+
+name="search"
+
+placeholder="Search Route, Bus, Starting Point or Destination"
+
+value="<?php echo htmlspecialchars($search); ?>">
+
+<button type="submit">
+
+🔍 Search
+
+</button>
+
+</form>
+
+</div>
+
+<div class="stats">
+
+<div>
+
+<h2>Total Routes</h2>
+
+</div>
+
+<div class="total">
+
+<?php echo $total_routes; ?>
+
+</div>
+
+</div>
+
+<div class="table-box">
+<?php
+if(isset($_GET['deleted'])){
+    echo "<div style='
+        background:#d4edda;
+        color:#155724;
+        padding:15px;
+        margin-bottom:20px;
+        border-radius:10px;
+        font-weight:bold;
+    '>
+    🗑 Route deleted successfully.
+    </div>";
+}
+?>
+
+<h2>Route List</h2>
+
+<div class="table-responsive">
+
+<table>
+
+<tr>
+
+<th>#</th>
+
+<th>Bus</th>
+
+<th>Route Name</th>
+
+<th>From</th>
+
+<th>To</th>
+
+<th>Departure</th>
+
+<th>Arrival</th>
+
+<th>Fare</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+<?php
+
+$serial = 1;
+
+if(mysqli_num_rows($route_result) > 0){
+
+while($row = mysqli_fetch_assoc($route_result)){
+
+?>
+
+<tr>
+
+<td><?php echo $serial++; ?></td>
+
+<td><?php echo htmlspecialchars($row['bus_name']); ?></td>
+
+<td><?php echo htmlspecialchars($row['route_name']); ?></td>
+
+<td><?php echo htmlspecialchars($row['starting_point']); ?></td>
+
+<td><?php echo htmlspecialchars($row['destination']); ?></td>
+
+<td><?php echo date("h:i A", strtotime($row['departure_time'])); ?></td>
+
+<td><?php echo date("h:i A", strtotime($row['arrival_time'])); ?></td>
+
+<td>৳<?php echo number_format($row['fare'],2); ?></td>
+
+<td>
+
+<?php
+
+if($row['status']=="Active"){
+
+echo "<span class='active'>Active</span>";
+
+}else{
+
+echo "<span class='inactive'>Inactive</span>";
+
+}
+
+?>
+
+</td>
+
+<td>
+
+<a class="edit-btn"
+href="index.php?page=edit_route&route_id=<?php echo $row['route_id']; ?>">
+
+✏ Edit
+
+</a>
+
+<a class="delete-btn"
+href="index.php?page=delete_route&route_id=<?php echo $row['route_id']; ?>"
+onclick="return confirm('Are you sure you want to delete this route?');">
+
+🗑 Delete
+
+</a>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<tr>
+
+<td colspan="10"
+style="
+text-align:center;
+padding:40px;
+color:#777;
+font-size:18px;
+">
+
+No routes found.
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+?>
+
+</table>
+
+</div>
+
+<a href="index.php?page=add_route" class="add-btn">
+
+➕ Add New Route
+
+</a>
+
+</div>
+
+<!-- Footer -->
+
+<div style="
+margin-top:40px;
+padding:25px;
+text-align:center;
+color:#777;
+font-size:15px;
+">
+
+© 2026 Bus Tracker | Route Management System
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
