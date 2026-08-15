@@ -69,7 +69,7 @@ class CompanyModel
         ON b.bus_id = bus.bus_id
         WHERE bus.company_id='$company_id'
         AND b.booking_status IN ('Confirmed','Completed')
-        AND b.payment_status='Verified'
+        AND b.payment_status IN ('Verified','Confirmed')
         ";
 
         return mysqli_query($this->conn, $sql);
@@ -85,7 +85,7 @@ class CompanyModel
         ON b.bus_id = bus.bus_id
         WHERE bus.company_id='$company_id'
         AND b.booking_status IN ('Confirmed','Completed')
-        AND b.payment_status='Verified'
+        AND b.payment_status IN ('Verified','Confirmed')
         ";
 
         return mysqli_query($this->conn, $sql);
@@ -101,7 +101,7 @@ class CompanyModel
         ON b.bus_id = bus.bus_id
         WHERE bus.company_id='$company_id'
         AND b.booking_status='Confirmed'
-        AND b.payment_status='Verified'
+        AND b.payment_status IN ('Verified','Confirmed')
         ";
 
         return mysqli_query($this->conn, $sql);
@@ -184,12 +184,12 @@ class CompanyModel
     public function getBusReportStats($company_id)
     {
         $company_id = (int) $company_id;
-        return mysqli_query($this->conn, "SELECT b.bus_name, (SELECT COUNT(*) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_bookings, (SELECT COALESCE(SUM(total_seats),0) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_tickets, (SELECT COALESCE(SUM(total_amount),0) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status='Confirmed' AND bk.payment_status='Verified') AS total_revenue FROM buses b WHERE b.company_id='$company_id' ORDER BY b.bus_name ASC");
+        return mysqli_query($this->conn, "SELECT b.bus_name, (SELECT COUNT(*) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status IN ('Verified','Confirmed')) AS total_bookings, (SELECT COALESCE(SUM(total_seats),0) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status IN ('Verified','Confirmed')) AS total_tickets, (SELECT COALESCE(SUM(total_amount),0) FROM bookings bk WHERE bk.bus_id=b.bus_id AND bk.booking_status='Confirmed' AND bk.payment_status IN ('Verified','Confirmed')) AS total_revenue FROM buses b WHERE b.company_id='$company_id' ORDER BY b.bus_name ASC");
     }
 
     public function getRouteReportStats($company_id)
     {
         $company_id = (int) $company_id;
-        return mysqli_query($this->conn, "SELECT r.route_name, (SELECT COUNT(*) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_bookings, (SELECT COALESCE(SUM(total_seats),0) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status='Verified') AS total_tickets, (SELECT COALESCE(SUM(total_amount),0) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status='Confirmed' AND bk.payment_status='Verified') AS total_revenue FROM routes r WHERE r.company_id='$company_id' ORDER BY r.route_name ASC");
+        return mysqli_query($this->conn, "SELECT r.route_name, (SELECT COUNT(*) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status IN ('Verified','Confirmed')) AS total_bookings, (SELECT COALESCE(SUM(total_seats),0) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status IN ('Verified','Confirmed')) AS total_tickets, (SELECT COALESCE(SUM(total_amount),0) FROM bookings bk WHERE bk.route_id=r.route_id AND bk.booking_status='Confirmed' AND bk.payment_status IN ('Verified','Confirmed')) AS total_revenue FROM routes r WHERE r.company_id='$company_id' ORDER BY r.route_name ASC");
     }
 }
