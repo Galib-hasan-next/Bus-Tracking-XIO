@@ -1,0 +1,101 @@
+<?php
+
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/BusModel.php';
+require_once __DIR__ . '/../models/RouteModel.php';
+
+class RouteController
+{
+    private $busModel;
+    private $routeModel;
+
+    public function __construct()
+    {
+        $database = new Database();
+        $conn = $database->connect();
+        $this->busModel = new BusModel($conn);
+        $this->routeModel = new RouteModel($conn);
+    }
+
+    private function companyId()
+    {
+        if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'company') {
+            header('Location: index.php?page=signin');
+            exit();
+        }
+        $company = mysqli_fetch_assoc($this->busModel->getCompanyByUserId((int) $_SESSION['user_id']));
+        if (!$company) {
+            header('Location: index.php?page=company_dashboard');
+            exit();
+        }
+        return (int) $company['company_id'];
+    }
+
+    private function input()
+    {
+        $fields = ['bus_id', 'route_name', 'starting_point', 'destination', 'stops', 'fare', 'departure_time', 'arrival_time', 'journey_time', 'status'];
+        $route = [];
+        foreach ($fields as $field) {
+            $route[$field] = trim((string) ($_POST[$field] ?? ''));
+        }
+        return $route;
+    }
+
+    public function viewRoutes()
+    {
+        $company_id = $this->companyId();
+        $name = $_SESSION['name'] ?? '';
+        $search = trim((string) ($_GET['search'] ?? ''));
+        $route_result = $this->routeModel->getRoutes($company_id, $search);
+        $total_routes = mysqli_fetch_assoc($this->routeModel->getRouteCount($company_id))['total'];
+        include __DIR__ . '/../views/route/view_routes.php';
+    }
+
+    public function addRoute()
+    {
+        $company_id = $this->companyId();
+        $name = $_SESSION['name'] ?? '';
+        $message = '';
+        $bus_result = $this->routeModel->getCompanyBuses($company_id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $route = $this->input();
+            if ($this->routeModel->routeExists($route['route_name'], $company_id)) {
+                $message = 'Route already exists.';
+            } elseif ($this->routeModel->saveRoute($company_id, $route)) {
+                header('Location: index.php?page=view_routes&added=1');
+                exit();
+            }
+        }
+        include __DIR__ . '/../views/route/add_route.php';
+    }
+
+    public function editRoute()
+    {
+        $company_id = $this->companyId();
+        $name = $_SESSION['name'] ?? '';
+        $message = '';
+        $route_id = (int) ($_GET['id'] ?? $_GET['route_id'] ?? 0);
+        $route = mysqli_fetch_assoc($this->routeModel->getRoute($route_id, $company_id));
+        if (!$route) {
+            header('Location: index.php?page=view_routes');
+            exit();
+        }
+        $bus_result = $this->routeModel->getCompanyBuses($company_id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $input = $this->input();
+            if ($this->routeModel->saveRoute($company_id, $input, $route_id)) {
+                header('Location: index.php?page=view_routes&updated=1');
+                exit();
+            }
+            $route = array_merge($route, $input);
+        }
+        include __DIR__ . '/../views/route/edit_route.php';
+    }
+
+    public function deleteRoute()
+    {
+        $this->routeModel->deleteRoute((int) ($_GET['id'] ?? $_GET['route_id'] ?? 0), $this->companyId());
+        header('Location: index.php?page=view_routes&deleted=1');
+        exit();
+    }
+}
