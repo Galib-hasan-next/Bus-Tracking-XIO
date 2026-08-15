@@ -22,9 +22,9 @@ class CompanyController
 
     public function dashboard()
     {
-        /* ===========================================
+        /* ============================================
            CHECK COMPANY LOGIN
-        =========================================== */
+        ============================================ */
 
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] != "company") {
 

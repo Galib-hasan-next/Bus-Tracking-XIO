@@ -1,0 +1,555 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Company Booking Details</title>
+
+<style>
+/* ======================================
+   GENERAL
+===================================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+background:#eef4ff;
+padding:40px;
+
+}
+
+.ticket{
+
+max-width:1000px;
+margin:auto;
+
+background:white;
+
+border-radius:20px;
+
+overflow:hidden;
+
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+/* =====================================
+   HEADER
+===================================== */
+
+.header{
+
+background:#0b2b6d;
+
+color:white;
+
+padding:30px;
+
+text-align:center;
+
+}
+
+.header h1{
+
+font-size:34px;
+
+margin-bottom:10px;
+
+}
+
+.header p{
+
+opacity:.9;
+
+}
+
+/* =====================================
+   CONTENT
+===================================== */
+
+.content{
+
+padding:35px;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(280px,1fr));
+
+gap:20px;
+
+margin-bottom:30px;
+
+}
+
+.card{
+
+background:#f7fbff;
+
+padding:20px;
+
+border-radius:12px;
+
+}
+
+.card h3{
+
+color:#0b2b6d;
+
+margin-bottom:15px;
+
+}
+
+.card p{
+
+margin:10px 0;
+
+color:#555;
+
+line-height:1.6;
+
+}
+
+.card strong{
+
+color:#0b2b6d;
+
+}
+
+/* =====================================
+   STATUS
+===================================== */
+
+.status{
+
+display:inline-block;
+
+padding:8px 15px;
+
+border-radius:8px;
+
+font-weight:bold;
+
+color:white;
+
+}
+
+.paid{
+
+background:#28a745;
+
+}
+
+.pending{
+
+background:#f39c12;
+
+}
+
+.confirmed{
+
+background:#28a745;
+
+}
+
+.cancelled{
+
+background:#dc3545;
+
+}
+
+/* =====================================
+   BUTTONS
+===================================== */
+
+.footer{
+
+padding:30px;
+
+text-align:center;
+
+border-top:1px solid #eee;
+
+}
+
+.btn{
+
+display:inline-block;
+
+padding:14px 28px;
+
+margin:10px;
+
+border-radius:10px;
+
+text-decoration:none;
+
+font-size:16px;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+.back{
+
+background:#1d5eff;
+
+color:white;
+
+}
+
+.back:hover{
+
+background:#0b45d1;
+
+}
+
+.confirm{
+
+background:#28a745;
+
+color:white;
+
+}
+
+.confirm:hover{
+
+background:#218838;
+
+}
+
+.cancel{
+
+background:#dc3545;
+
+color:white;
+
+}
+
+.cancel:hover{
+
+background:#b52a37;
+
+}
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media(max-width:768px){
+
+body{
+
+padding:15px;
+
+}
+
+.grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="ticket">
+
+<div class="header">
+
+<h1>
+
+🎫 Company Booking Details
+
+</h1>
+
+<p>
+
+Booking ID :
+<strong>
+
+#<?php echo $booking['booking_id']; ?>
+
+</strong>
+
+</p>
+
+</div>
+
+<div class="content">
+
+<div class="grid">
+<!-- ===========================
+PASSENGER INFORMATION
+=========================== -->
+
+<div class="card">
+
+<h3>👤 Passenger Information</h3>
+
+<p>
+<strong>Name:</strong>
+<?php echo htmlspecialchars($booking['passenger_name']); ?>
+</p>
+
+<p>
+<strong>Email:</strong>
+<?php echo htmlspecialchars($booking['email']); ?>
+</p>
+
+<p>
+<strong>Phone:</strong>
+<?php echo htmlspecialchars($booking['phone']); ?>
+</p>
+
+<p>
+<strong>Journey Date:</strong>
+<?php echo date("d M Y", strtotime($booking['journey_date'])); ?>
+</p>
+
+</div>
+
+<!-- ===========================
+BUS INFORMATION
+=========================== -->
+
+<div class="card">
+
+<h3>🚌 Bus Information</h3>
+
+<p>
+<strong>Company:</strong>
+<?php echo htmlspecialchars($booking['company_name']); ?>
+</p>
+
+<p>
+<strong>Bus Name:</strong>
+<?php echo htmlspecialchars($booking['bus_name']); ?>
+</p>
+
+<p>
+<strong>Bus Number:</strong>
+<?php echo htmlspecialchars($booking['bus_number']); ?>
+</p>
+
+<p>
+<strong>Bus Type:</strong>
+<?php echo htmlspecialchars($booking['bus_type']); ?>
+</p>
+
+</div>
+
+<!-- ===========================
+ROUTE INFORMATION
+=========================== -->
+
+<div class="card">
+
+<h3>📍 Route Information</h3>
+
+<p>
+<strong>Route:</strong>
+<?php echo htmlspecialchars($booking['route_name']); ?>
+</p>
+
+<p>
+<strong>From:</strong>
+<?php echo htmlspecialchars($booking['starting_point']); ?>
+</p>
+
+<p>
+<strong>To:</strong>
+<?php echo htmlspecialchars($booking['destination']); ?>
+</p>
+
+<p>
+<strong>Departure:</strong>
+<?php echo date("h:i A", strtotime($booking['departure_time'])); ?>
+</p>
+
+<p>
+<strong>Arrival:</strong>
+<?php echo date("h:i A", strtotime($booking['arrival_time'])); ?>
+</p>
+
+</div>
+
+<!-- ===========================
+BOOKING INFORMATION
+=========================== -->
+
+<div class="card">
+
+<h3>💳 Booking Information</h3>
+
+<p>
+<strong>Seats:</strong>
+<?php echo htmlspecialchars($booking['seat_numbers']); ?>
+</p>
+
+<p>
+<strong>Total Seats:</strong>
+<?php echo $booking['total_seats']; ?>
+</p>
+
+<p>
+<strong>Total Amount:</strong>
+৳<?php echo number_format($booking['total_amount'],2); ?>
+</p>
+
+<p>
+<strong>Payment Status:</strong>
+
+<span class="status <?php echo ($booking['payment_status']=="Paid") ? "paid" : "pending"; ?>">
+
+<?php echo htmlspecialchars($booking['payment_status']); ?>
+
+</span>
+
+</p>
+
+<p>
+
+<strong>Booking Status:</strong>
+
+<?php
+
+if($booking['booking_status']=="Confirmed")
+{
+
+?>
+
+<span class="status confirmed">
+
+Confirmed
+
+</span>
+
+<?php
+
+}
+elseif($booking['booking_status']=="Cancelled")
+{
+
+?>
+
+<span class="status cancelled">
+
+Cancelled
+
+</span>
+
+<?php
+
+}
+else
+{
+
+?>
+
+<span class="status pending">
+
+<?php echo htmlspecialchars($booking['booking_status']); ?>
+
+</span>
+
+<?php
+
+}
+
+?>
+
+</p>
+
+<p>
+
+<strong>Booking Date:</strong>
+
+<?php echo date("d M Y h:i A", strtotime($booking['booking_date'])); ?>
+
+</p>
+
+</div>
+
+</div>
+<!-- ===========================
+ACTION BUTTONS
+=========================== -->
+
+<div class="footer">
+
+<?php if($booking['booking_status']!="Confirmed"){ ?>
+
+<a
+href="index.php?page=confirm_booking&booking_id=<?php echo $booking['booking_id']; ?>"
+class="btn confirm"
+onclick="return confirm('Confirm this booking?');">
+
+✅ Confirm Booking
+
+</a>
+
+<?php } ?>
+
+<?php if($booking['payment_status']==='Submitted'){ ?>
+<a href="index.php?page=payment_verification&booking_id=<?php echo $booking['booking_id']; ?>&action=confirm" class="btn confirm">✅ Verify Payment</a>
+<a href="index.php?page=payment_verification&booking_id=<?php echo $booking['booking_id']; ?>&action=reject" class="btn cancel">❌ Reject Payment</a>
+<?php } ?>
+
+<?php if($booking['booking_status']!="Cancelled"){ ?>
+
+<a
+href="index.php?page=cancel_booking&booking_id=<?php echo $booking['booking_id']; ?>"
+class="btn cancel"
+onclick="return confirm('Cancel this booking?');">
+
+❌ Cancel Booking
+
+</a>
+
+<?php } ?>
+
+<a
+href="index.php?page=company_bookings"
+class="btn back">
+
+⬅ Back to Bookings
+
+</a>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
+

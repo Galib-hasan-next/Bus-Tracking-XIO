@@ -21,4 +21,28 @@ class AdminModel
 
         return mysqli_query($this->conn, "UPDATE companies SET status='$status' WHERE company_id='$company_id'");
     }
+
+    public function getDashboardStats()
+    {
+        $stats = [];
+        $stats['total_companies'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM companies"))['total'];
+        $stats['verified_companies'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM companies WHERE status='approved'"))['total'];
+        $stats['pending_companies'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM companies WHERE status='pending'"))['total'];
+        $stats['total_buses'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM buses"))['total'];
+        $stats['total_routes'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM routes"))['total'];
+        $stats['total_bookings'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM bookings"))['total'];
+        $stats['total_tickets'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT SUM(total_seats) AS total FROM bookings WHERE booking_status IN ('Confirmed','Completed') AND payment_status='Verified'"))['total'];
+        $stats['total_revenue'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT SUM(total_amount) AS total FROM bookings WHERE booking_status='Confirmed' AND payment_status='Verified'"))['total'];
+        return $stats;
+    }
+
+    public function getBookingBreakdown()
+    {
+        return mysqli_query($this->conn, "SELECT booking_status, COUNT(*) AS total FROM bookings GROUP BY booking_status ORDER BY booking_status ASC");
+    }
+
+    public function getCompanyStats()
+    {
+        return mysqli_query($this->conn, "SELECT c.company_name, c.status, (SELECT COUNT(*) FROM buses b WHERE b.company_id=c.company_id) AS total_buses, (SELECT COUNT(*) FROM routes r WHERE r.company_id=c.company_id) AS total_routes, (SELECT COUNT(*) FROM bookings b JOIN buses bus ON b.bus_id=bus.bus_id WHERE bus.company_id=c.company_id) AS total_bookings, (SELECT COALESCE(SUM(bk.total_amount),0) FROM bookings bk JOIN buses bus2 ON bk.bus_id=bus2.bus_id WHERE bus2.company_id=c.company_id AND bk.booking_status='Confirmed' AND bk.payment_status='Verified') AS total_revenue FROM companies c ORDER BY c.company_name ASC");
+    }
 }

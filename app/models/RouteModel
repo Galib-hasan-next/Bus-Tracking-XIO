@@ -1,0 +1,80 @@
+<?php
+
+class RouteModel
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getRoutes($company_id, $search = '')
+    {
+        $company_id = (int) $company_id;
+        $where = "routes.company_id='$company_id'";
+
+        if ($search != '') {
+            $search = mysqli_real_escape_string($this->conn, $search);
+            $where .= " AND (routes.route_name LIKE '%$search%' OR routes.starting_point LIKE '%$search%' OR routes.destination LIKE '%$search%')";
+        }
+
+        return mysqli_query($this->conn, "SELECT routes.*, buses.bus_name, buses.bus_number FROM routes LEFT JOIN buses ON routes.bus_id=buses.bus_id WHERE $where ORDER BY routes.route_id DESC");
+    }
+
+    public function getRoute($route_id, $company_id)
+    {
+        $route_id = (int) $route_id;
+        $company_id = (int) $company_id;
+
+        return mysqli_query($this->conn, "SELECT * FROM routes WHERE route_id='$route_id' AND company_id='$company_id'");
+    }
+
+    public function getCompanyBuses($company_id)
+    {
+        $company_id = (int) $company_id;
+
+        return mysqli_query($this->conn, "SELECT * FROM buses WHERE company_id='$company_id' ORDER BY bus_name ASC");
+    }
+
+    public function getRouteCount($company_id)
+    {
+        $company_id = (int) $company_id;
+
+        return mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM routes WHERE company_id='$company_id'");
+    }
+
+    public function routeExists($routeName, $companyId, $excludeRouteId = 0)
+    {
+        $routeName = mysqli_real_escape_string($this->conn, $routeName);
+        $companyId = (int) $companyId;
+        $excludeRouteId = (int) $excludeRouteId;
+
+        return mysqli_num_rows(mysqli_query($this->conn, "SELECT route_id FROM routes WHERE route_name='$routeName' AND company_id='$companyId' AND route_id!='$excludeRouteId'")) > 0;
+    }
+
+    public function saveRoute($companyId, $route, $routeId = 0)
+    {
+        $companyId = (int) $companyId;
+        $routeId = (int) $routeId;
+        foreach ($route as $key => $value) {
+            $route[$key] = mysqli_real_escape_string($this->conn, (string) $value);
+        }
+
+        if ($routeId) {
+            $sql = "UPDATE routes SET bus_id='{$route['bus_id']}', route_name='{$route['route_name']}', starting_point='{$route['starting_point']}', destination='{$route['destination']}', stops='{$route['stops']}', fare='{$route['fare']}', departure_time='{$route['departure_time']}', arrival_time='{$route['arrival_time']}', journey_time='{$route['journey_time']}', status='{$route['status']}' WHERE route_id='$routeId' AND company_id='$companyId'";
+        } else {
+            $sql = "INSERT INTO routes (company_id,bus_id,route_name,starting_point,destination,stops,fare,departure_time,arrival_time,journey_time,status) VALUES ('$companyId','{$route['bus_id']}','{$route['route_name']}','{$route['starting_point']}','{$route['destination']}','{$route['stops']}','{$route['fare']}','{$route['departure_time']}','{$route['arrival_time']}','{$route['journey_time']}','{$route['status']}')";
+        }
+
+        return mysqli_query($this->conn, $sql);
+    }
+
+    public function deleteRoute($routeId, $companyId)
+    {
+        $routeId = (int) $routeId;
+        $companyId = (int) $companyId;
+
+        return mysqli_query($this->conn, "DELETE FROM routes WHERE route_id='$routeId' AND company_id='$companyId'");
+    }
+}
