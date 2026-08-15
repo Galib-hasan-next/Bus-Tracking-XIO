@@ -1,0 +1,125 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Company Profile</title>
+
+<link rel="stylesheet" href="css/company_dashboard.css">
+
+</head>
+
+
+<body>
+
+
+<div class="main">
+
+
+<div class="company-box">
+
+
+<h2>🏢 Company Profile</h2>
+
+<?php if (isset($_GET['updated']) && $_GET['updated'] === '1') { ?>
+
+<div style="background:#d4edda;color:#155724;padding:12px;margin:15px 0;border-radius:8px;">
+
+Profile updated successfully.
+
+</div>
+
+<?php } ?>
+
+
+<div class="info">
+
+
+<div class="info-item">
+
+<strong>Company Name</strong><br>
+
+<?php echo htmlspecialchars($company['company_name']); ?>
+
+</div>
+
+
+
+<div class="info-item">
+
+<strong>Email</strong><br>
+
+<?php echo htmlspecialchars($company['email']); ?>
+
+</div>
+
+
+
+<div class="info-item">
+
+<strong>Phone</strong><br>
+
+<?php echo htmlspecialchars($company['phone']); ?>
+
+</div>
+
+
+
+<div class="info-item">
+
+<strong>Address</strong><br>
+
+<?php echo htmlspecialchars($company['address']); ?>
+
+</div>
+
+
+
+<div class="info-item">
+
+<strong>Status</strong><br>
+
+<?php echo ucfirst($company['status']); ?>
+
+</div>
+
+
+</div>
+
+
+<br>
+
+<div style="margin:18px 0;">
+
+<a href="index.php?page=edit_company_profile" style="display:inline-block;background:#1d5eff;color:#ffffff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:bold;">
+
+Edit Profile
+
+</a>
+
+</div>
+
+
+<a class="btn-small" href="index.php?page=company_dashboard">
+
+⬅ Dashboard
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>
+
+
+
