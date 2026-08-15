@@ -84,7 +84,7 @@ class CompanyModel
         INNER JOIN buses bus
         ON b.bus_id = bus.bus_id
         WHERE bus.company_id='$company_id'
-        AND b.booking_status IN ('Confirmed','Completed')
+        AND b.booking_status IN ('Confirmed","Completed')
         AND b.payment_status='Verified'
         ";
 
