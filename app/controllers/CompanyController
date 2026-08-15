@@ -2,11 +2,13 @@
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../models/CompanyModel.php';
 require_once __DIR__ . '/../models/BookingModel.php';
+require_once __DIR__ . '/../models/NotificationModel.php';
 
 class CompanyController
 {
     private $companyModel;
     private $bookingModel;
+    private $notificationModel;
 
     public function __construct()
     {
@@ -15,6 +17,7 @@ class CompanyController
 
         $this->companyModel = new CompanyModel($conn);
         $this->bookingModel = new BookingModel($conn);
+        $this->notificationModel = new NotificationModel($conn);
     }
 
     public function dashboard()
@@ -31,7 +34,7 @@ class CompanyController
         }
 
         $user_id = $_SESSION['user_id'];
-        $name = htmlspecialchars($_SESSION['name']);
+        $name = $_SESSION['name'] ?? '';
 
         /* ===========================================
            COMPANY INFORMATION
@@ -54,28 +57,28 @@ class CompanyController
         =========================================== */
 
         $result = $this->companyModel->getTotalBuses($company_id);
-        $total_bus = mysqli_fetch_assoc($result)['total'];
+        $total_bus = (int) (mysqli_fetch_assoc($result)['total'] ?? 0);
 
         /* ===========================================
            ACTIVE BUSES
         =========================================== */
 
         $result = $this->companyModel->getActiveBuses($company_id);
-        $active_bus = mysqli_fetch_assoc($result)['total'];
+        $active_bus = (int) (mysqli_fetch_assoc($result)['total'] ?? 0);
 
         /* ===========================================
            TOTAL ROUTES
         =========================================== */
 
         $result = $this->companyModel->getTotalRoutes($company_id);
-        $total_routes = mysqli_fetch_assoc($result)['total'];
+        $total_routes = (int) (mysqli_fetch_assoc($result)['total'] ?? 0);
 
         /* ===========================================
            TOTAL BOOKINGS
         =========================================== */
 
         $result = $this->companyModel->getTotalBookings($company_id);
-        $total_bookings = mysqli_fetch_assoc($result)['total'];
+        $total_bookings = (int) (mysqli_fetch_assoc($result)['total'] ?? 0);
 
         /* ===========================================
            TICKETS SOLD
@@ -109,7 +112,7 @@ class CompanyController
 
         /* ===========================================
            LOAD VIEW
-        =========================================== */
+        ============================================ */
 
         include __DIR__ . '/../views/company/dashboard.php';
     }
@@ -147,11 +150,16 @@ class CompanyController
                 'phone' => trim($_POST['phone'] ?? ''),
                 'address' => trim($_POST['address'] ?? ''),
             ];
-            if ($this->companyModel->updateCompanyProfile($company['company_id'], $data)) {
+            if ($data['company_name'] === '' || $data['email'] === '' || $data['phone'] === '' || $data['address'] === '') {
+                $message = 'Company name, email, phone, and address are required.';
+            } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $message = 'Enter a valid email address.';
+            } elseif ($this->companyModel->updateCompanyProfile($company['company_id'], $data)) {
                 header('Location: index.php?page=company_profile&updated=1');
                 exit();
+            } else {
+                $message = 'Profile update failed.';
             }
-            $message = 'Profile update failed.';
             $company = array_merge($company, $data);
         }
         include __DIR__ . '/../views/company/edit_profile.php';
@@ -183,8 +191,15 @@ class CompanyController
     {
         $company = $this->requireCompany();
         $booking_id = (int) ($_GET['booking_id'] ?? 0);
-        if (mysqli_fetch_assoc($this->bookingModel->getCompanyBooking($booking_id, $company['company_id']))) {
-            $this->bookingModel->updateStatus($booking_id, $status);
+        $booking = mysqli_fetch_assoc($this->bookingModel->getCompanyBooking($booking_id, $company['company_id']));
+        if ($booking) {
+            if ($status === 'Confirmed' && !in_array($booking['payment_status'], ['Verified', 'Confirmed'], true)) {
+                header('Location: index.php?page=company_booking_details&booking_id=' . $booking_id . '&error=payment_required');
+                exit();
+            }
+            if ($this->bookingModel->updateStatus($booking_id, $status) && $status === 'Cancelled') {
+                $this->notificationModel->create((int) $booking['passenger_id'], $booking_id, 'Your booking #' . $booking_id . ' has been cancelled.');
+            }
         }
         header('Location: index.php?page=company_booking_details&booking_id=' . $booking_id . '&success=1');
         exit();
@@ -212,14 +227,17 @@ class CompanyController
         $company = $this->requireCompany();
         $name = $_SESSION['name'] ?? '';
         $message = '';
-        $booking_id = (int) ($_GET['booking_id'] ?? 0);
-        $action = $_GET['action'] ?? '';
-        if ($booking_id > 0 && in_array($action, ['confirm','reject'], true)) {
+        $booking_id = (int) ($_POST['booking_id'] ?? 0);
+        $action = $_POST['action'] ?? '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $booking_id > 0 && in_array($action, ['confirm','reject'], true)) {
             $booking = mysqli_fetch_assoc($this->bookingModel->getCompanyBooking($booking_id, $company['company_id']));
             if ($booking && $booking['payment_status'] === 'Submitted') {
-                $status = $action === 'confirm' ? 'Verified' : 'Rejected';
-                $bookingStatus = $action === 'confirm' ? 'Confirmed' : 'Booked';
+                $status = $action === 'confirm' ? 'Confirmed' : 'Rejected';
                 if ($this->bookingModel->verifyPayment($booking_id, $company['company_id'], $status)) {
+                    $notification = $action === 'confirm'
+                        ? 'Your payment for Booking #' . $booking_id . ' has been confirmed. Your ticket is now confirmed.'
+                        : 'Your payment for Booking #' . $booking_id . ' has been rejected. Please check your payment details.';
+                    $this->notificationModel->create((int) $booking['passenger_id'], $booking_id, $notification);
                     $message = $action === 'confirm' ? 'Payment confirmed successfully.' : 'Payment rejected.';
                 } else {
                     $message = 'Unable to update payment.';
