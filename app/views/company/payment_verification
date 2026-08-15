@@ -1,0 +1,55 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Verification</title>
+<style>
+body{font-family:Segoe UI,sans-serif;background:#eef4ff;margin:0;padding:0;color:#222;} 
+.container{max-width:1200px;margin:40px auto;padding:20px;background:#fff;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08);} 
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;} 
+.btn{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:8px;background:#0b2b6d;color:#fff;} 
+.table{width:100%;border-collapse:collapse;} 
+.table th,.table td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;} 
+.paid{color:#0a7f2e;font-weight:bold;} 
+.pending{color:#b45309;font-weight:bold;} 
+.message{padding:12px;border-radius:8px;margin-bottom:15px;background:#e8f7ed;color:#176b3a;} 
+</style>
+</head>
+<body>
+<div class="container">
+<div class="topbar">
+<h2>💳 Payment Verification</h2>
+<a class="btn" href="index.php?page=company_dashboard">← Back to Dashboard</a>
+</div>
+<?php if($message!==''){ echo '<div class="message">'.htmlspecialchars($message).'</div>'; } ?>
+<table class="table">
+<tr><th>Booking ID</th><th>Passenger</th><th>Bus</th><th>Route</th><th>Seats</th><th>Amount</th><th>Payment</th><th>Transaction</th><th>Payment Status</th><th>Booking Status</th><th>Action</th></tr>
+<?php while($row=mysqli_fetch_assoc($result)){ ?>
+<tr>
+<td>#<?php echo (int)$row['booking_id']; ?></td>
+<td><?php echo htmlspecialchars($row['passenger_name']); ?></td>
+<td><?php echo htmlspecialchars($row['bus_name']); ?></td>
+<td><?php echo htmlspecialchars($row['route_name']); ?></td>
+<td><?php echo htmlspecialchars($row['seat_numbers']); ?></td>
+<td>৳<?php echo number_format($row['total_amount'],2); ?></td>
+<td><?php echo htmlspecialchars($row['payment_method'] ?? '-'); ?></td>
+<td><?php echo htmlspecialchars($row['transaction_id'] ?? '-'); ?></td>
+<td><?php echo htmlspecialchars($row['payment_status']); ?></td>
+<td><?php echo htmlspecialchars($row['booking_status']); ?></td>
+<td>
+<?php if($row['payment_status']==='Submitted'){ ?>
+<form method="POST" action="index.php?page=verify_payment" style="display:inline"><input type="hidden" name="booking_id" value="<?php echo (int)$row['booking_id']; ?>"><input type="hidden" name="action" value="confirm"><button class="btn" type="submit">Confirm</button></form>
+<form method="POST" action="index.php?page=verify_payment" style="display:inline"><input type="hidden" name="booking_id" value="<?php echo (int)$row['booking_id']; ?>"><input type="hidden" name="action" value="reject"><button class="btn" type="submit">Reject</button></form>
+<?php } else { echo '-'; } ?>
+</td>
+</tr>
+<?php } ?>
+</table>
+</div>
+</body>
+</html>
