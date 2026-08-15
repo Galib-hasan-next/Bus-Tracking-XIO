@@ -1,0 +1,200 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Edit Company Profile</title>
+
+
+<link rel="stylesheet" href="css/company_dashboard.css">
+
+
+<style>
+
+
+.form-box{
+
+    width:600px;
+
+    margin:40px auto;
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+
+}
+
+
+.form-box h2{
+
+    color:#0b2b6d;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.form-box input,
+.form-box textarea{
+
+
+    width:100%;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+}
+
+
+
+.form-box button{
+
+
+    background:#1d5eff;
+
+    color:white;
+
+    border:none;
+
+    padding:15px 30px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+
+}
+
+
+.form-box button:hover{
+
+    background:#0b45d1;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+
+<div class="form-box">
+
+
+<h2>
+🏢 Edit Company Profile
+</h2>
+
+
+
+<form method="POST">
+
+
+
+<label>
+Company Name
+</label>
+
+<input type="text"
+name="company_name"
+value="<?php echo htmlspecialchars($company['company_name']); ?>"
+required>
+
+
+
+
+<label>
+Phone
+</label>
+
+<input type="text"
+name="phone"
+value="<?php echo htmlspecialchars($company['phone']); ?>"
+required>
+
+
+
+
+<label>
+Email
+</label>
+
+<input type="email"
+name="email"
+value="<?php echo htmlspecialchars($company['email']); ?>"
+required>
+
+
+
+
+<label>
+Address
+</label>
+
+<textarea name="address">
+
+<?php echo htmlspecialchars($company['address']); ?>
+
+</textarea>
+
+
+
+
+<button name="update">
+
+Save Changes
+
+</button>
+
+
+
+</form>
+
+
+<br>
+
+
+<a class="btn-small" href="index.php?page=company_profile">
+
+⬅ Back Profile
+
+</a>
+
+
+
+</div>
+
+
+
+</body>
+
+</html>
+
+
+
