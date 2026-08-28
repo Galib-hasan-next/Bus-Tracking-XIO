@@ -25,14 +25,17 @@ class AdminModel
     public function getDashboardStats()
     {
         $stats = [];
+        $stats['total_passengers'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM users WHERE role='passenger'"))['total'];
         $stats['total_companies'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM companies"))['total'];
         $stats['verified_companies'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM companies WHERE status='approved'"))['total'];
         $stats['pending_companies'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM companies WHERE status='pending'"))['total'];
         $stats['total_buses'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM buses"))['total'];
         $stats['total_routes'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM routes"))['total'];
         $stats['total_bookings'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM bookings"))['total'];
-        $stats['total_tickets'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT SUM(total_seats) AS total FROM bookings WHERE booking_status IN ('Confirmed','Completed') AND payment_status='Verified'"))['total'];
-        $stats['total_revenue'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT SUM(total_amount) AS total FROM bookings WHERE booking_status='Confirmed' AND payment_status='Verified'"))['total'];
+        $stats['confirmed_bookings'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM bookings WHERE booking_status IN ('Confirmed','Completed') AND payment_status IN ('Confirmed','Verified','Paid')"))['total'];
+        $stats['cancelled_bookings'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COUNT(*) AS total FROM bookings WHERE booking_status='Cancelled'"))['total'];
+        $stats['total_tickets'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COALESCE(SUM(total_seats),0) AS total FROM bookings WHERE booking_status IN ('Confirmed','Completed') AND payment_status IN ('Confirmed','Verified','Paid')"))['total'];
+        $stats['total_revenue'] = mysqli_fetch_assoc(mysqli_query($this->conn, "SELECT COALESCE(SUM(total_amount),0) AS total FROM bookings WHERE booking_status IN ('Confirmed','Completed') AND payment_status IN ('Confirmed','Verified','Paid')"))['total'];
         return $stats;
     }
 
@@ -43,6 +46,34 @@ class AdminModel
 
     public function getCompanyStats()
     {
-        return mysqli_query($this->conn, "SELECT c.company_name, c.status, (SELECT COUNT(*) FROM buses b WHERE b.company_id=c.company_id) AS total_buses, (SELECT COUNT(*) FROM routes r WHERE r.company_id=c.company_id) AS total_routes, (SELECT COUNT(*) FROM bookings b JOIN buses bus ON b.bus_id=bus.bus_id WHERE bus.company_id=c.company_id) AS total_bookings, (SELECT COALESCE(SUM(bk.total_amount),0) FROM bookings bk JOIN buses bus2 ON bk.bus_id=bus2.bus_id WHERE bus2.company_id=c.company_id AND bk.booking_status='Confirmed' AND bk.payment_status='Verified') AS total_revenue FROM companies c ORDER BY c.company_name ASC");
+        return mysqli_query($this->conn, "SELECT c.company_name, c.status, (SELECT COUNT(*) FROM buses b WHERE b.company_id=c.company_id) AS total_buses, (SELECT COUNT(*) FROM routes r WHERE r.company_id=c.company_id) AS total_routes, (SELECT COUNT(*) FROM bookings b JOIN buses bus ON b.bus_id=bus.bus_id WHERE bus.company_id=c.company_id) AS total_bookings, (SELECT COALESCE(SUM(bk.total_amount),0) FROM bookings bk JOIN buses bus2 ON bk.bus_id=bus2.bus_id WHERE bus2.company_id=c.company_id AND bk.booking_status IN ('Confirmed','Completed') AND bk.payment_status IN ('Confirmed','Verified','Paid')) AS total_revenue FROM companies c ORDER BY c.company_name ASC");
+    }
+
+    public function getUsers($search = '')
+    {
+        $search = trim($search);
+        if ($search === '') {
+            return mysqli_query($this->conn, "SELECT user_id, name, email, phone, role, status, created_at FROM users ORDER BY user_id DESC");
+        }
+        $term = '%' . mysqli_real_escape_string($this->conn, $search) . '%';
+        $statement = mysqli_prepare($this->conn, 'SELECT user_id, name, email, phone, role, status, created_at FROM users WHERE name LIKE ? OR email LIKE ? OR phone LIKE ? OR role LIKE ? OR status LIKE ? ORDER BY user_id DESC');
+        mysqli_stmt_bind_param($statement, 'sssss', $term, $term, $term, $term, $term);
+        mysqli_stmt_execute($statement);
+        return mysqli_stmt_get_result($statement);
+    }
+
+    public function getUser($userId)
+    {
+        $statement = mysqli_prepare($this->conn, 'SELECT user_id, name, email, phone, role, status, created_at FROM users WHERE user_id = ? LIMIT 1');
+        mysqli_stmt_bind_param($statement, 'i', $userId);
+        mysqli_stmt_execute($statement);
+        return mysqli_stmt_get_result($statement);
+    }
+
+    public function updateUserStatus($userId, $status)
+    {
+        $statement = mysqli_prepare($this->conn, "UPDATE users SET status = ? WHERE user_id = ? AND status <> ?");
+        mysqli_stmt_bind_param($statement, 'sis', $status, $userId, $status);
+        return mysqli_stmt_execute($statement);
     }
 }

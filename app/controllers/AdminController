@@ -48,6 +48,44 @@ class AdminController
         include __DIR__ . '/../views/admin/verify_companies.php';
     }
 
+    public function users()
+    {
+        $this->requireAdmin();
+        $name = $_SESSION['name'] ?? 'Admin';
+        $search = trim($_GET['search'] ?? '');
+        $users = $this->adminModel->getUsers($search);
+        include __DIR__ . '/../views/admin/users.php';
+    }
+
+    public function userDetails()
+    {
+        $this->requireAdmin();
+        $name = $_SESSION['name'] ?? 'Admin';
+        $userId = (int) ($_GET['user_id'] ?? 0);
+        $user = mysqli_fetch_assoc($this->adminModel->getUser($userId));
+        if (!$user) {
+            header('Location: index.php?page=admin_users');
+            exit();
+        }
+        include __DIR__ . '/../views/admin/user_details.php';
+    }
+
+    public function updateUserStatus()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=admin_users');
+            exit();
+        }
+        $userId = (int) ($_POST['user_id'] ?? 0);
+        $status = $_POST['status'] ?? '';
+        if ($userId > 0 && in_array($status, ['active', 'inactive'], true) && $userId !== (int) $_SESSION['user_id']) {
+            $this->adminModel->updateUserStatus($userId, $status);
+        }
+        header('Location: index.php?page=admin_user_details&user_id=' . $userId);
+        exit();
+    }
+
     public function reports()
     {
         $this->requireAdmin();
