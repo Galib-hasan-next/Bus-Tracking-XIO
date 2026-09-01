@@ -1,0 +1,85 @@
+<?php
+
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/BookingModel.php';
+
+class BookingController
+{
+    private $model;
+
+    public function __construct()
+    {
+        $database = new Database();
+        $this->model = new BookingModel($database->connect());
+    }
+
+    public function search()
+    {
+        $from = trim($_GET['from'] ?? '');
+        $to = trim($_GET['to'] ?? '');
+        $journey_date = $_GET['journey_date'] ?? '';
+        $result = $this->model->searchRoutes($from, $to);
+
+        include __DIR__ . '/../views/booking/search_bus.php';
+    }
+
+    public function bookTicket()
+    {
+        if (($_SESSION['role'] ?? '') !== 'passenger') {
+            header('Location: index.php?page=signin');
+            exit();
+        }
+
+        $passenger_id = $_SESSION['user_id'];
+        $passenger_name = $_SESSION['name'];
+        $route_id = (int) ($_GET['route_id'] ?? 0);
+        $journey_date = $_GET['journey_date'] ?? '';
+        $route = mysqli_fetch_assoc($this->model->getRouteForBooking($route_id));
+
+        if (!$route) {
+            header('Location: index.php?page=search_bus');
+            exit();
+        }
+
+        $bus_id = $route['bus_id'];
+        if ((int) ($_GET['bus_id'] ?? $bus_id) !== (int) $bus_id || !$journey_date || strtotime($journey_date) < strtotime(date('Y-m-d'))) {
+            header('Location: index.php?page=search_bus');
+            exit();
+        }
+        $total_seats = $route['total_seats'];
+        $fare = $route['fare'];
+        $booked = [];
+
+        foreach (mysqli_fetch_all($this->model->getBookedSeats($route_id, $journey_date), MYSQLI_ASSOC) as $row) {
+            foreach (explode(',', $row['seat_numbers']) as $seat) {
+                $booked[] = trim($seat);
+            }
+        }
+
+        $message = '';
+
+        if (isset($_POST['book_ticket'])) {
+            $seats = $_POST['seats'] ?? [];
+
+            if (!$seats) {
+                $message = 'Please select at least one seat.';
+            } else {
+                $bookingId = $this->model->createBooking(
+                    $route,
+                    $passenger_id,
+                    $journey_date,
+                    $seats
+                );
+
+                if ($bookingId) {
+                    header('Location: index.php?page=booking_success&booking_id=' . $bookingId);
+                    exit();
+                }
+
+                $message = 'Booking Failed.';
+            }
+        }
+
+        include __DIR__ . '/../views/booking/book_ticket.php';
+    }
+}

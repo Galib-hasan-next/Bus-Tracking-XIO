@@ -1,0 +1,29 @@
+<?php
+// View only. Notifications are prepared and scoped to the authenticated passenger.
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications</title>
+<style>
+body{font-family:'Segoe UI',sans-serif;background:#eef4ff;margin:0;color:#222}.header{background:#0b2b6d;color:#fff;padding:20px 40px;display:flex;justify-content:space-between;align-items:center}.header a,.btn{color:#fff;text-decoration:none;background:#1d5eff;border:0;border-radius:8px;padding:9px 14px;cursor:pointer}.container{max-width:900px;margin:35px auto;padding:20px}.notification{background:#fff;border-radius:14px;padding:20px;margin-bottom:15px;box-shadow:0 5px 18px rgba(0,0,0,.08);border-left:5px solid #cbd5e1}.notification.unread{border-left-color:#1d5eff;background:#f8fbff}.meta{color:#64748b;font-size:13px;margin-top:10px}.read-form{margin-top:12px}.empty{background:#fff;padding:30px;border-radius:14px;text-align:center}
+</style>
+</head>
+<body>
+<div class="header"><strong>🔔 Notifications</strong><div><a href="index.php?page=passenger_dashboard">Dashboard</a> <a href="index.php?page=my_bookings">My Bookings</a></div></div>
+<div class="container">
+<h1>Notifications<?php if ($unread_notifications > 0) { echo ' (' . (int) $unread_notifications . ' unread)'; } ?></h1>
+<p>Important payment and booking updates for <?php echo htmlspecialchars($name); ?>.</p><br>
+<?php if (mysqli_num_rows($result) > 0) { while ($notification = mysqli_fetch_assoc($result)) { ?>
+<div class="notification <?php echo $notification['is_read'] ? '' : 'unread'; ?>">
+<strong>🔔 Booking #<?php echo (int) $notification['booking_id']; ?></strong>
+<p><?php echo htmlspecialchars($notification['message']); ?></p>
+<div class="meta"><?php echo date('d M Y h:i A', strtotime($notification['created_at'])); ?><?php echo $notification['is_read'] ? ' · Read' : ' · Unread'; ?></div>
+<?php if (!$notification['is_read']) { ?><form class="read-form" method="POST" action="index.php?page=mark_notification_read"><input type="hidden" name="notification_id" value="<?php echo (int) $notification['notification_id']; ?>"><button class="btn" type="submit">Mark as read</button></form><?php } ?>
+</div>
+<?php } } else { ?><div class="empty"><h3>No notifications yet.</h3><p>Booking and payment updates will appear here.</p></div><?php } ?>
+</div>
+</body>
+</html>
