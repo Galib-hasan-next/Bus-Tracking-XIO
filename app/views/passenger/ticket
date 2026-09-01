@@ -1,0 +1,43 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmed Ticket</title>
+<style>
+body{font-family:Segoe UI,sans-serif;background:#eef4ff;margin:0;padding:0;color:#222;} 
+.container{max-width:900px;margin:40px auto;padding:20px;background:#fff;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08);} 
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;} 
+.btn{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:8px;background:#0b2b6d;color:#fff;} 
+.card{padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fbff;} 
+p{margin:8px 0;} 
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h2>🎫 Ticket Confirmed</h2>
+<a class="btn" href="index.php?page=my_bookings">← Back to Bookings</a>
+</div>
+<div class="card">
+<p><strong>Booking ID:</strong> #<?php echo (int)$booking['booking_id']; ?></p>
+<p><strong>Passenger:</strong> <?php echo htmlspecialchars($booking['name']); ?></p>
+<p><strong>Company:</strong> <?php echo htmlspecialchars($booking['company_name']); ?></p>
+<p><strong>Bus:</strong> <?php echo htmlspecialchars($booking['bus_name']); ?></p>
+<p><strong>Bus Number:</strong> <?php echo htmlspecialchars($booking['bus_number']); ?></p>
+<p><strong>Route:</strong> <?php echo htmlspecialchars($booking['starting_point']); ?> → <?php echo htmlspecialchars($booking['destination']); ?></p>
+<p><strong>Journey Date:</strong> <?php echo date('d M Y', strtotime($booking['journey_date'])); ?></p>
+<p><strong>Seats:</strong> <?php echo htmlspecialchars($booking['seat_numbers']); ?></p>
+<p><strong>Fare:</strong> ৳<?php echo number_format($booking['total_amount'],2); ?></p>
+<p><strong>Payment Method:</strong> <?php echo htmlspecialchars($booking['payment_method'] ?? 'Pending'); ?></p>
+<p><strong>Transaction ID:</strong> <?php echo htmlspecialchars($booking['transaction_id'] ?? 'Pending'); ?></p>
+<p><strong>Payment Status:</strong> <?php echo htmlspecialchars($booking['payment_status']); ?></p>
+<p><strong>Booking Status:</strong> <?php echo htmlspecialchars($booking['booking_status']); ?></p>
+</div>
+</div>
+</body>
+</html>
