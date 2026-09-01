@@ -1,0 +1,337 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Search Bus</title>
+
+<link rel="stylesheet" href="css/search_bus.css">
+
+</head>
+
+<body>
+
+<!-- ===========================
+NAVBAR
+=========================== -->
+
+<nav class="navbar">
+
+<div class="logo">
+
+🚌 BUS TRACKER
+
+</div>
+
+<ul>
+
+<li><a href="index.php?page=home">Home</a></li>
+
+<li><a href="index.php?page=search_bus" class="active">Search Bus</a></li>
+
+<li><a href="index.php?page=live_tracking">Live Tracking</a></li>
+
+<?php
+
+if(isset($_SESSION['user_id'])){
+
+    if($_SESSION['role']=="passenger"){
+
+        echo '<li><a href="index.php?page=my_bookings">My Bookings</a></li>';
+
+        echo '<li><a href="index.php?page=logout" class="btn">Logout</a></li>';
+
+    }
+
+    elseif($_SESSION['role']=="company"){
+
+        echo '<li><a href="index.php?page=company_dashboard" class="btn">Dashboard</a></li>';
+
+    }
+
+    elseif($_SESSION['role']=="admin"){
+
+        echo '<li><a href="index.php?page=admin_dashboard" class="btn">Admin</a></li>';
+
+    }
+
+}
+
+else{
+
+    echo '<li><a href="index.php?page=signin" class="btn">Sign In</a></li>';
+
+}
+
+?>
+
+</ul>
+
+</nav>
+
+<!-- ===========================
+SEARCH SECTION
+=========================== -->
+
+<div class="container">
+
+<h1>
+
+🔍 Search Available Buses
+
+</h1>
+
+<form
+
+method="GET"
+
+action="index.php"
+
+class="search-form"
+
+>
+
+<input type="hidden" name="page" value="search_bus">
+
+<input
+
+type="text"
+
+name="from"
+
+placeholder="From"
+
+value="<?php echo htmlspecialchars($from); ?>"
+
+required
+
+>
+
+<input
+
+type="text"
+
+name="to"
+
+placeholder="To"
+
+value="<?php echo htmlspecialchars($to); ?>"
+
+required
+
+>
+
+<input
+
+type="date"
+
+name="journey_date"
+
+value="<?php echo htmlspecialchars($journey_date); ?>"
+
+required
+
+>
+
+<button type="submit">
+
+Search Bus
+
+</button>
+
+</form>
+
+<hr>
+
+<h2>
+
+Available Buses
+
+</h2>
+<div class="bus-list">
+
+<?php
+
+if(mysqli_num_rows($result)>0){
+
+while($row=mysqli_fetch_assoc($result)){
+
+?>
+
+<div class="bus-card">
+
+<div class="bus-header">
+
+<h3>
+
+<?php echo htmlspecialchars($row['bus_name']); ?>
+
+</h3>
+
+<span class="company">
+
+<?php echo htmlspecialchars($row['company_name']); ?>
+
+</span>
+
+</div>
+
+<div class="bus-details">
+
+<p>
+
+<strong>Bus Number:</strong>
+
+<?php echo htmlspecialchars($row['bus_number']); ?>
+
+</p>
+
+<p>
+
+<strong>Bus Type:</strong>
+
+<?php echo htmlspecialchars($row['bus_type']); ?>
+
+</p>
+
+<p>
+
+<strong>Route:</strong>
+
+<?php echo htmlspecialchars($row['starting_point']); ?>
+
+→
+
+<?php echo htmlspecialchars($row['destination']); ?>
+
+</p>
+
+<p>
+
+<strong>Departure:</strong>
+
+<?php echo date("h:i A",strtotime($row['departure_time'])); ?>
+
+</p>
+
+<p>
+
+<strong>Arrival:</strong>
+
+<?php echo date("h:i A",strtotime($row['arrival_time'])); ?>
+
+</p>
+
+<p>
+
+<strong>Total Seats:</strong>
+
+<?php echo $row['total_seats']; ?>
+
+</p>
+
+<p>
+
+<strong>Fare:</strong>
+
+<b>
+
+৳<?php echo number_format($row['fare']); ?>
+
+</b>
+
+</p>
+
+</div>
+
+<div class="bus-footer">
+
+<?php
+
+if(isset($_SESSION['user_id']) && $_SESSION['role']=="passenger"){
+
+?>
+
+<a
+
+class="book-btn"
+
+href="index.php?page=book_ticket&route_id=<?php echo $row['route_id']; ?>&bus_id=<?php echo $row['bus_id']; ?>&journey_date=<?php echo urlencode($journey_date); ?>"
+
+>
+
+🎫 Book Now
+
+</a>
+
+<?php
+
+}else{
+
+?>
+
+<a
+
+class="login-btn"
+
+href="index.php?page=signin"
+
+>
+
+🔐 Login to Book
+
+</a>
+
+<?php
+
+}
+
+?>
+
+</div>
+
+</div>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<div class="no-result">
+
+<h3>
+
+No buses found.
+
+</h3>
+
+<p>
+
+Try searching with another route.
+
+</p>
+
+</div>
+
+<?php
+
+}
+
+?>
+
+</div>
+
+
+

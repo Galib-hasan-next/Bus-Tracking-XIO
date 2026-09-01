@@ -1,0 +1,344 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Booking Successful</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+background:#eef4ff;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+min-height:100vh;
+
+padding:30px;
+
+}
+
+.card{
+
+background:white;
+
+width:700px;
+
+max-width:100%;
+
+padding:40px;
+
+border-radius:20px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+text-align:center;
+
+}
+
+.success{
+
+font-size:70px;
+
+margin-bottom:20px;
+
+}
+
+h1{
+
+color:#28a745;
+
+margin-bottom:15px;
+
+}
+
+.subtitle{
+
+color:#666;
+
+margin-bottom:35px;
+
+}
+
+.details{
+
+text-align:left;
+
+background:#f7fbff;
+
+padding:25px;
+
+border-radius:15px;
+
+margin-bottom:30px;
+
+}
+
+.details p{
+
+margin:12px 0;
+
+font-size:17px;
+
+}
+
+.details strong{
+
+color:#0b2b6d;
+
+}
+
+.buttons{
+
+display:flex;
+
+justify-content:center;
+
+gap:20px;
+
+flex-wrap:wrap;
+
+}
+
+.btn{
+
+text-decoration:none;
+
+padding:15px 30px;
+
+border-radius:10px;
+
+font-size:17px;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+.home{
+
+background:#1d5eff;
+
+color:white;
+
+}
+
+.home:hover{
+
+background:#0b45d1;
+
+}
+
+.bookings{
+
+background:#28a745;
+
+color:white;
+
+}
+
+.bookings:hover{
+
+background:#218838;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="success">
+
+✅
+
+</div>
+
+<h1>
+
+Booking Confirmed!
+
+</h1>
+
+<p class="subtitle">
+
+Your ticket has been booked successfully.
+
+</p>
+
+<div class="details">
+
+<p>
+
+<strong>Booking ID:</strong>
+
+<?php echo $booking['booking_id']; ?>
+
+</p>
+
+<p>
+
+<strong>Passenger:</strong>
+
+<?php echo $_SESSION['name']; ?>
+
+</p>
+
+<p>
+
+<strong>Company:</strong>
+
+<?php echo htmlspecialchars($booking['company_name']); ?>
+
+</p>
+
+<p>
+
+<strong>Bus:</strong>
+
+<?php echo htmlspecialchars($booking['bus_name']); ?>
+
+(<?php echo htmlspecialchars($booking['bus_number']); ?>)
+
+</p>
+<p>
+
+<strong>Route:</strong>
+
+<?php echo htmlspecialchars($booking['starting_point']); ?>
+
+→
+
+<?php echo htmlspecialchars($booking['destination']); ?>
+
+</p>
+
+<p>
+
+<strong>Journey Date:</strong>
+
+<?php echo date("d M Y", strtotime($booking['journey_date'])); ?>
+
+</p>
+
+<p>
+
+<strong>Booked Seats:</strong>
+
+<?php echo htmlspecialchars($booking['seat_numbers']); ?>
+
+</p>
+
+<p>
+
+<strong>Total Seats:</strong>
+
+<?php echo $booking['total_seats']; ?>
+
+</p>
+
+<p>
+
+<strong>Total Amount:</strong>
+
+৳<?php echo number_format($booking['total_amount'],2); ?>
+
+</p>
+
+<p>
+
+<strong>Payment Status:</strong>
+
+<span style="
+color:<?php echo ($booking['payment_status']=="Paid") ? "green" : "orange"; ?>;
+font-weight:bold;
+">
+
+<?php echo $booking['payment_status']; ?>
+
+</span>
+
+</p>
+
+<p>
+
+<strong>Booking Status:</strong>
+
+<span style="
+color:<?php echo ($booking['booking_status']=="Booked") ? "green" : "red"; ?>;
+font-weight:bold;
+">
+
+<?php echo $booking['booking_status']; ?>
+
+</span>
+
+</p>
+
+</div>
+
+<div class="buttons">
+
+<a
+href="index.php?page=my_bookings"
+class="btn bookings">
+
+🧾 My Bookings
+
+</a>
+
+<a
+href="index.php?page=home"
+class="btn home">
+
+🏠 Back to Home
+
+</a>
+
+</div>
+
+<div style="
+margin-top:35px;
+padding-top:20px;
+border-top:1px solid #ddd;
+color:#777;
+font-size:15px;
+">
+
+Thank you for choosing <strong>Bus Tracker</strong>.<br>
+
+Have a safe and pleasant journey! 🚌
+
+</div>
+
+</div>
+
+</body>
+
+</html>

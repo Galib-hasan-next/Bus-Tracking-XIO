@@ -1,0 +1,718 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Book Ticket</title>
+
+<style>
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+
+}
+
+body{
+
+background:#eef4ff;
+
+}
+
+.container{
+
+max-width:1200px;
+
+margin:40px auto;
+
+background:white;
+
+padding:35px;
+
+border-radius:20px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+h1{
+
+color:#0b2b6d;
+
+margin-bottom:25px;
+
+}
+
+.message{
+
+background:#ffdede;
+
+color:red;
+
+padding:15px;
+
+border-radius:10px;
+
+margin-bottom:20px;
+
+font-weight:bold;
+
+}
+
+.info-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:20px;
+
+margin-bottom:30px;
+
+}
+
+.info{
+
+background:#f7fbff;
+
+padding:20px;
+
+border-radius:12px;
+
+}
+
+.info h3{
+
+color:#0b2b6d;
+
+margin-bottom:10px;
+
+}
+
+.info p{
+
+margin:8px 0;
+
+color:#555;
+
+}
+/* Journey */
+
+.form-section{
+
+margin-top:30px;
+
+}
+
+.form-section h2{
+
+color:#0b2b6d;
+
+margin-bottom:20px;
+
+}
+
+.input-group{
+
+margin-bottom:20px;
+
+}
+
+.input-group label{
+
+display:block;
+
+margin-bottom:8px;
+
+font-weight:bold;
+
+color:#444;
+
+}
+
+.input-group input{
+
+width:100%;
+
+padding:15px;
+
+border:1px solid #ccc;
+
+border-radius:10px;
+
+font-size:16px;
+
+outline:none;
+
+}
+
+.input-group input:focus{
+
+border-color:#1d5eff;
+
+box-shadow:0 0 8px rgba(29,94,255,.25);
+
+}
+
+/* Seat Layout */
+
+.seat-container{
+
+margin-top:35px;
+
+}
+
+.seat-container h2{
+
+color:#0b2b6d;
+
+margin-bottom:20px;
+
+}
+
+.driver{
+
+width:180px;
+
+margin:0 auto 30px;
+
+padding:15px;
+
+background:#555;
+
+color:white;
+
+text-align:center;
+
+border-radius:10px;
+
+font-weight:bold;
+
+}
+
+.seat-grid{
+
+display:grid;
+
+grid-template-columns:repeat(4,70px);
+
+justify-content:center;
+
+gap:15px 25px;
+
+margin-bottom:30px;
+
+}
+
+.seat{
+
+width:70px;
+
+height:70px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+border-radius:12px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+border:2px solid #1d5eff;
+
+background:#dff1ff;
+
+transition:.3s;
+
+}
+
+.seat:hover{
+
+transform:scale(1.05);
+
+}
+
+.seat input{
+
+display:none;
+
+}
+
+.seat.selected{
+
+background:#1d5eff;
+
+color:white;
+
+}
+
+.seat.booked{
+
+background:#dc3545;
+
+border-color:#dc3545;
+
+color:white;
+
+cursor:not-allowed;
+
+}
+
+.summary{
+
+margin-top:30px;
+
+background:#f7fbff;
+
+padding:25px;
+
+border-radius:15px;
+
+}
+
+.summary h2{
+
+color:#0b2b6d;
+
+margin-bottom:15px;
+
+}
+
+.summary p{
+
+margin:10px 0;
+
+font-size:17px;
+
+}
+
+.book-btn{
+
+margin-top:25px;
+
+width:100%;
+
+padding:18px;
+
+background:#28a745;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
+font-size:18px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.book-btn:hover{
+
+background:#218838;
+
+}
+
+@media(max-width:700px){
+
+.seat-grid{
+
+grid-template-columns:repeat(4,55px);
+
+gap:10px;
+
+}
+
+.seat{
+
+width:55px;
+
+height:55px;
+
+font-size:14px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>
+
+🎫 Book Your Ticket
+
+</h1>
+
+<?php
+
+if($message!=""){
+
+echo "<div class='message'>$message</div>";
+
+}
+
+?>
+
+<div class="info-grid">
+
+<div class="info">
+
+<h3>🚌 Bus</h3>
+
+<p><?php echo htmlspecialchars($route['bus_name']); ?></p>
+
+<p><?php echo htmlspecialchars($route['bus_number']); ?></p>
+
+<p><?php echo htmlspecialchars($route['bus_type']); ?></p>
+
+</div>
+
+<div class="info">
+
+<h3>🏢 Company</h3>
+
+<p><?php echo htmlspecialchars($route['company_name']); ?></p>
+
+</div>
+
+<div class="info">
+
+<h3>📍 Route</h3>
+
+<p>
+
+<?php echo htmlspecialchars($route['starting_point']); ?>
+
+→
+
+<?php echo htmlspecialchars($route['destination']); ?>
+
+</p>
+
+</div>
+
+<div class="info">
+
+<h3>💰 Fare</h3>
+
+<p>
+
+৳<?php echo number_format($fare,2); ?>
+
+Per Seat
+
+</p>
+
+</div>
+
+</div>
+
+<form method="POST">
+
+<div class="form-section">
+
+<h2>
+
+Journey Information
+
+</h2>
+
+<div class="input-group">
+
+<label>
+
+Journey Date
+
+</label>
+
+<input
+
+type="date"
+
+name="journey_date"
+
+value="<?php echo htmlspecialchars($journey_date); ?>"
+
+min="<?php echo date('Y-m-d'); ?>"
+
+required>
+
+</div>
+
+</div>
+
+<div class="seat-container">
+
+<h2>
+
+Select Your Seats
+
+</h2>
+
+<div class="driver">
+
+🚌 DRIVER
+
+</div>
+
+<div class="seat-grid">
+<?php
+
+/* Generate Seat Layout */
+
+$rows = ceil($total_seats / 4);
+
+$seatNumber = 1;
+
+for($r=0; $r<$rows; $r++){
+
+    $letters = ['A','A','B','B'];
+
+    for($c=0; $c<4; $c++){
+
+        if($seatNumber <= $total_seats){
+
+            $seat = $letters[$c] . $seatNumber;
+
+            $isBooked = in_array($seat, $booked);
+
+?>
+
+<label class="seat <?php echo $isBooked ? 'booked' : ''; ?>">
+
+<?php if(!$isBooked){ ?>
+
+<input
+type="checkbox"
+name="seats[]"
+value="<?php echo $seat; ?>">
+
+<?php } ?>
+
+<?php echo $seat; ?>
+
+</label>
+
+<?php
+
+        }
+
+        $seatNumber++;
+
+    }
+
+}
+
+?>
+
+</div>
+
+<div style="
+display:flex;
+justify-content:center;
+gap:30px;
+margin:20px 0 35px;
+flex-wrap:wrap;
+">
+
+<div>
+🟢 Available
+</div>
+
+<div>
+🔴 Booked
+</div>
+
+<div>
+🔵 Selected
+</div>
+
+</div>
+
+</div>
+
+<div class="summary">
+
+<h2>
+
+Booking Summary
+
+</h2>
+
+<p>
+
+Passenger :
+
+<strong>
+
+<?php echo htmlspecialchars($passenger_name); ?>
+
+</strong>
+
+</p>
+
+<p>
+
+Selected Seats :
+
+<strong id="selectedSeats">
+
+None
+
+</strong>
+
+</p>
+
+<p>
+
+Number of Seats :
+
+<strong id="seatCount">
+
+0
+
+</strong>
+
+</p>
+
+<p>
+
+Fare Per Seat :
+
+<strong>
+
+৳<?php echo number_format($fare,2); ?>
+
+</strong>
+
+</p>
+
+<p>
+
+Total Amount :
+
+<strong id="totalAmount">
+
+৳0
+
+</strong>
+
+</p>
+<div style="margin-top:30px;">
+
+<button
+type="submit"
+name="book_ticket"
+class="book-btn">
+
+🎫 Confirm Booking
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+<script>
+
+const fare = <?php echo $fare; ?>;
+
+const seats = document.querySelectorAll(".seat input");
+
+const selectedSeats = document.getElementById("selectedSeats");
+
+const seatCount = document.getElementById("seatCount");
+
+const totalAmount = document.getElementById("totalAmount");
+
+function updateSummary(){
+
+    let selected = [];
+
+    seats.forEach(function(seat){
+
+        if(seat.checked){
+
+            selected.push(seat.value);
+
+            seat.parentElement.classList.add("selected");
+
+        }else{
+
+            seat.parentElement.classList.remove("selected");
+
+        }
+
+    });
+
+    if(selected.length==0){
+
+        selectedSeats.innerHTML="None";
+
+    }else{
+
+        selectedSeats.innerHTML=selected.join(", ");
+
+    }
+
+    seatCount.innerHTML=selected.length;
+
+    totalAmount.innerHTML="৳"+(selected.length*fare).toFixed(2);
+
+}
+
+seats.forEach(function(seat){
+
+    seat.addEventListener("change",updateSummary);
+
+});
+
+updateSummary();
+
+</script>
+
+<footer style="
+margin-top:40px;
+padding:25px;
+text-align:center;
+color:#777;
+font-size:15px;
+">
+
+© 2026 Bus Tracker | Online Ticket Booking System
+
+</footer>
+
+</body>
+
+</html>

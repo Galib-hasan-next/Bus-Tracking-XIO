@@ -1,0 +1,97 @@
+<?php
+
+class BookingModel
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getPassengerBookings($passenger_id)
+    {
+        $passenger_id = (int) $passenger_id;
+
+        return mysqli_query($this->conn, "SELECT b.booking_id, b.route_id, b.bus_id, b.passenger_id, b.booking_date, b.journey_date, b.seat_numbers, b.total_seats, b.total_amount, b.payment_status, b.booking_status, bus.bus_name, bus.bus_number, c.company_name, r.route_name, r.starting_point, r.destination FROM bookings b INNER JOIN buses bus ON b.bus_id=bus.bus_id INNER JOIN companies c ON bus.company_id=c.company_id INNER JOIN routes r ON b.route_id=r.route_id WHERE b.passenger_id='$passenger_id' ORDER BY b.booking_id DESC");
+    }
+
+    public function getBooking($booking_id, $passenger_id)
+    {
+        $booking_id = (int) $booking_id;
+        $passenger_id = (int) $passenger_id;
+
+        return mysqli_query($this->conn, "SELECT b.*, u.name, bus.bus_name, bus.bus_number, bus.bus_type, c.company_name, r.route_name, r.starting_point, r.destination, r.departure_time, r.arrival_time FROM bookings b INNER JOIN users u ON b.passenger_id=u.user_id INNER JOIN buses bus ON b.bus_id=bus.bus_id INNER JOIN companies c ON bus.company_id=c.company_id INNER JOIN routes r ON b.route_id=r.route_id WHERE b.booking_id='$booking_id' AND b.passenger_id='$passenger_id'");
+    }
+
+    public function getCompanyBookings($company_id)
+    {
+        $company_id = (int) $company_id;
+
+        return mysqli_query($this->conn, "SELECT b.*, u.name AS passenger_name, u.email AS passenger_email, u.phone AS passenger_phone, bus.bus_name, bus.bus_number, bus.bus_type, c.company_name, r.route_name, r.starting_point, r.destination, r.departure_time, r.arrival_time FROM bookings b INNER JOIN users u ON b.passenger_id=u.user_id INNER JOIN buses bus ON b.bus_id=bus.bus_id INNER JOIN companies c ON bus.company_id=c.company_id INNER JOIN routes r ON b.route_id=r.route_id WHERE bus.company_id='$company_id' ORDER BY b.booking_id DESC");
+    }
+
+    public function getCompanyBooking($bookingId, $companyId)
+    {
+        $bookingId = (int) $bookingId;
+        $companyId = (int) $companyId;
+        return mysqli_query($this->conn, "SELECT b.*, u.name AS passenger_name, u.email, u.phone, bus.bus_name, bus.bus_number, bus.bus_type, c.company_name, r.route_name, r.starting_point, r.destination, r.departure_time, r.arrival_time FROM bookings b INNER JOIN users u ON b.passenger_id=u.user_id INNER JOIN buses bus ON b.bus_id=bus.bus_id INNER JOIN companies c ON bus.company_id=c.company_id INNER JOIN routes r ON b.route_id=r.route_id WHERE b.booking_id='$bookingId' AND bus.company_id='$companyId'");
+    }
+
+    public function updateStatus($bookingId, $status)
+    {
+        $bookingId = (int) $bookingId;
+        $status = mysqli_real_escape_string($this->conn, $status);
+        return mysqli_query($this->conn, "UPDATE bookings SET booking_status='$status' WHERE booking_id='$bookingId'");
+    }
+
+    public function submitPayment($bookingId, $passengerId, $paymentMethod, $transactionId)
+    {
+        $bookingId = (int) $bookingId;
+        $passengerId = (int) $passengerId;
+        $paymentMethod = mysqli_real_escape_string($this->conn, $paymentMethod);
+        $transactionId = mysqli_real_escape_string($this->conn, $transactionId);
+        return mysqli_query($this->conn, "UPDATE bookings SET payment_method='$paymentMethod', transaction_id='$transactionId', payment_status='Submitted' WHERE booking_id='$bookingId' AND passenger_id='$passengerId' AND booking_status NOT IN ('Cancelled','Confirmed') AND payment_status NOT IN ('Submitted','Verified','Confirmed')");
+    }
+
+    public function verifyPayment($bookingId, $companyId, $status)
+    {
+        $bookingId = (int) $bookingId;
+        $companyId = (int) $companyId;
+        $status = mysqli_real_escape_string($this->conn, $status);
+        $bookingStatus = $status === 'Confirmed' ? 'Confirmed' : 'Booked';
+        return mysqli_query($this->conn, "UPDATE bookings b INNER JOIN buses bus ON b.bus_id=bus.bus_id SET b.payment_status='$status', b.booking_status='$bookingStatus', b.payment_verified_at=NOW() WHERE b.booking_id='$bookingId' AND bus.company_id='$companyId' AND b.payment_status='Submitted'");
+    }
+
+    public function getPaymentsForVerification($companyId)
+    {
+        $companyId = (int) $companyId;
+        return mysqli_query($this->conn, "SELECT b.*, u.name AS passenger_name, bus.bus_name, r.route_name FROM bookings b INNER JOIN users u ON b.passenger_id=u.user_id INNER JOIN buses bus ON b.bus_id=bus.bus_id INNER JOIN routes r ON b.route_id=r.route_id WHERE bus.company_id='$companyId' AND b.payment_status='Submitted' ORDER BY b.booking_id DESC");
+    }
+
+    public function searchRoutes($from, $to)
+    {
+        $from = mysqli_real_escape_string($this->conn, $from); $to = mysqli_real_escape_string($this->conn, $to);
+        return mysqli_query($this->conn, "SELECT r.*, b.bus_id,b.bus_name,b.bus_number,b.bus_type,b.total_seats,c.company_name FROM routes r INNER JOIN buses b ON r.bus_id=b.bus_id INNER JOIN companies c ON r.company_id=c.company_id WHERE r.status='Active' AND b.status='Active' AND r.starting_point LIKE '%$from%' AND r.destination LIKE '%$to%' ORDER BY r.departure_time ASC");
+    }
+
+    public function getRouteForBooking($routeId)
+    {
+        $routeId = (int) $routeId;
+        return mysqli_query($this->conn, "SELECT routes.*, buses.bus_name,buses.bus_number,buses.bus_type,buses.total_seats,buses.seat_layout,companies.company_name FROM routes INNER JOIN buses ON routes.bus_id=buses.bus_id INNER JOIN companies ON routes.company_id=companies.company_id WHERE routes.route_id='$routeId' LIMIT 1");
+    }
+
+    public function getBookedSeats($routeId, $journeyDate)
+    {
+        $routeId = (int) $routeId;
+        $journeyDate = mysqli_real_escape_string($this->conn, $journeyDate);
+        return mysqli_query($this->conn, "SELECT seat_numbers FROM bookings WHERE route_id='$routeId' AND journey_date='$journeyDate' AND booking_status <> 'Cancelled'");
+    }
+
+    public function createBooking($route, $passengerId, $date, $seats)
+    {
+        $seatNumbers = mysqli_real_escape_string($this->conn, implode(',', $seats)); $count=count($seats); $date=mysqli_real_escape_string($this->conn,$date); $passengerId=(int)$passengerId; $amount=$count*$route['fare'];
+        if (!mysqli_query($this->conn, "INSERT INTO bookings (route_id,bus_id,passenger_id,journey_date,seat_numbers,total_seats,total_amount) VALUES ('{$route['route_id']}','{$route['bus_id']}','$passengerId','$date','$seatNumbers','$count','$amount')")) return 0;
+        return mysqli_insert_id($this->conn);
+    }
+}
