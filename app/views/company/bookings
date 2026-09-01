@@ -1,0 +1,275 @@
+<?php
+// View only. Data is prepared by the controller.
+?>
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Company Bookings</title>
+
+<link rel="stylesheet" href="css/company_bookings.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- ===========================
+HEADER
+=========================== -->
+
+<div class="topbar">
+
+<div>
+
+<h1>🎫 Company Bookings</h1>
+
+<p>
+
+Welcome,
+
+<b><?php echo htmlspecialchars($name); ?></b>
+
+</p>
+
+</div>
+
+<div>
+
+<a href="index.php?page=company_dashboard" class="btn">
+
+← Back to Dashboard
+
+</a>
+
+</div>
+
+</div>
+
+<!-- ===========================
+SUMMARY CARD
+=========================== -->
+
+<div class="summary">
+
+<div class="summary-card">
+
+<h3>Total Bookings</h3>
+
+<h2><?php echo $total_bookings; ?></h2>
+
+</div>
+
+</div>
+
+<!-- ===========================
+BOOKINGS TABLE
+=========================== -->
+
+<div class="table-box">
+
+<h2>All Passenger Bookings</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Passenger</th>
+
+<th>Bus</th>
+
+<th>Bus Number</th>
+
+<th>Route</th>
+
+<th>Journey Date</th>
+
+<th>Seats</th>
+
+<th>Total Seats</th>
+
+<th>Amount</th>
+
+<th>Payment</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<?php
+
+if(mysqli_num_rows($result)>0){
+
+while($row=mysqli_fetch_assoc($result)){
+
+?>
+
+<tr>
+
+<td>
+
+#<?php echo $row['booking_id']; ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['passenger_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['bus_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['bus_number']); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['route_name']); ?>
+
+</td>
+
+<td>
+
+<?php echo date("d M Y",strtotime($row['journey_date'])); ?>
+
+</td>
+
+<td>
+
+<?php echo htmlspecialchars($row['seat_numbers']); ?>
+
+</td>
+
+<td>
+
+<?php echo $row['total_seats']; ?>
+
+</td>
+
+<td>
+
+৳<?php echo number_format($row['total_amount'],2); ?>
+
+</td>
+
+<td>
+
+<?php
+
+if($row['payment_status']=="Paid"){
+
+echo "<span class='paid'>Paid</span>";
+
+}else{
+
+echo "<span class='pending'>Pending</span>";
+
+}
+
+?>
+
+</td>
+
+<td>
+
+<?php
+
+if($row['booking_status']=="Confirmed"){
+
+echo "<span class='confirmed'>Confirmed</span>";
+
+}
+elseif($row['booking_status']=="Cancelled"){
+
+echo "<span class='cancelled'>Cancelled</span>";
+
+}
+else{
+
+echo "<span class='pending'>".$row['booking_status']."</span>";
+
+}
+
+?>
+
+</td>
+
+<td>
+
+<a
+
+href="index.php?page=company_booking_details&booking_id=<?php echo $row['booking_id']; ?>"
+
+class="view-btn">
+
+View
+
+</a>
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+}else{
+
+?>
+
+<tr>
+
+<td colspan="12" style="text-align:center;">
+
+No bookings found.
+
+</td>
+
+</tr>
+
+<?php
+
+}
+
+?>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
+
