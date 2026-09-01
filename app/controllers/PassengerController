@@ -3,11 +3,13 @@
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../models/PassengerModel.php';
 require_once __DIR__ . '/../models/BookingModel.php';
+require_once __DIR__ . '/../models/NotificationModel.php';
 
 class PassengerController
 {
     private $passengerModel;
     private $bookingModel;
+    private $notificationModel;
 
     public function __construct()
     {
@@ -15,6 +17,7 @@ class PassengerController
         $conn = $database->connect();
         $this->passengerModel = new PassengerModel($conn);
         $this->bookingModel = new BookingModel($conn);
+        $this->notificationModel = new NotificationModel($conn);
     }
 
     private function requirePassenger()
@@ -30,7 +33,8 @@ class PassengerController
         $this->requirePassenger();
         $name = $_SESSION['name'] ?? '';
         $count_result = $this->passengerModel->getBookingCount($_SESSION['user_id']);
-        $total_bookings = mysqli_fetch_assoc($count_result)['total'];
+        $total_bookings = (int) (mysqli_fetch_assoc($count_result)['total'] ?? 0);
+        $unread_notifications = $this->notificationModel->unreadCount((int) $_SESSION['user_id']);
         include __DIR__ . '/../views/passenger/dashboard.php';
     }
 
@@ -133,7 +137,7 @@ class PassengerController
             $message = 'This booking is already confirmed.';
         } elseif ($booking['payment_status'] === 'Submitted') {
             $message = 'Payment is already submitted and pending verification.';
-        } elseif ($booking['payment_status'] === 'Verified') {
+        } elseif (in_array($booking['payment_status'], ['Verified', 'Confirmed'], true)) {
             $message = 'Payment is already verified.';
         }
 
@@ -145,6 +149,7 @@ class PassengerController
             } elseif ($transactionId === '') {
                 $message = 'Transaction ID is required.';
             } elseif ($this->bookingModel->submitPayment($booking_id, $_SESSION['user_id'], $paymentMethod, $transactionId)) {
+                $this->notificationModel->create((int) $_SESSION['user_id'], $booking_id, 'Your payment for Booking #' . $booking_id . ' has been submitted and is waiting for company verification.');
                 header('Location: index.php?page=payment&booking_id=' . $booking_id . '&submitted=1');
                 exit();
             } else {
@@ -161,7 +166,7 @@ class PassengerController
         $name = $_SESSION['name'] ?? '';
         $booking_id = (int) ($_GET['booking_id'] ?? 0);
         $booking = mysqli_fetch_assoc($this->bookingModel->getBooking($booking_id, $_SESSION['user_id']));
-        if (!$booking || $booking['booking_status'] !== 'Confirmed' || $booking['payment_status'] !== 'Verified') {
+        if (!$booking || $booking['booking_status'] !== 'Confirmed' || !in_array($booking['payment_status'], ['Verified', 'Confirmed'], true)) {
             header('Location: index.php?page=my_bookings');
             exit();
         }
@@ -172,7 +177,28 @@ class PassengerController
     {
         $this->requirePassenger();
         $booking_id = (int) ($_GET['booking_id'] ?? 0);
-        if (mysqli_fetch_assoc($this->bookingModel->getBooking($booking_id, $_SESSION['user_id']))) $this->bookingModel->updateStatus($booking_id, 'Cancelled');
+        if (mysqli_fetch_assoc($this->bookingModel->getBooking($booking_id, $_SESSION['user_id'])) && $this->bookingModel->updateStatus($booking_id, 'Cancelled')) {
+            $this->notificationModel->create((int) $_SESSION['user_id'], $booking_id, 'Your booking #' . $booking_id . ' has been cancelled.');
+        }
         header('Location: index.php?page=my_bookings&cancel=success'); exit();
+    }
+
+    public function notifications()
+    {
+        $this->requirePassenger();
+        $name = $_SESSION['name'] ?? '';
+        $result = $this->notificationModel->getForPassenger((int) $_SESSION['user_id']);
+        $unread_notifications = $this->notificationModel->unreadCount((int) $_SESSION['user_id']);
+        include __DIR__ . '/../views/passenger/notifications.php';
+    }
+
+    public function markNotificationRead()
+    {
+        $this->requirePassenger();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->notificationModel->markRead((int) ($_POST['notification_id'] ?? 0), (int) $_SESSION['user_id']);
+        }
+        header('Location: index.php?page=notifications');
+        exit();
     }
 }
